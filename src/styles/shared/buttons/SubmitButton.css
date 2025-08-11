@@ -12,12 +12,21 @@
   color: rgb(255, 255, 255);
 }
 
+.action-button-n {
+  background-color: #dc0000;
+  color: rgb(255, 255, 255);
+}
+
 .reset-button {
   color: rgb(133, 133, 133);
 }
 
 .action-button:hover {
   background-color: #006f88;
+}
+
+.action-button-n:hover {
+  background-color: #a10000;
 }
 
 .reset-button:hover {

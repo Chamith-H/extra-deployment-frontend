@@ -13,3 +13,7 @@ export async function viewExpense(expenseId: string) {
 export async function approveExpense(expenseId: string) {
   return await POST(controller, `approve-expense`, { expID: expenseId });
 }
+
+export async function rejectExpense(expenseId: string) {
+  return await POST(controller, `reject-expense`, { expID: expenseId });
+}

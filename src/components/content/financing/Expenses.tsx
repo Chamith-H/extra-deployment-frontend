@@ -381,9 +381,14 @@ export default function Expenses() {
                           <p className="mb-0">Pending</p>
                         </div>
                       )}
-                      {item.Status !== "Pending" && (
+                      {item.Status === "Approved" && (
                         <div className="expense-state-box approved-exp-class">
                           <p className="mb-0">Approved</p>
+                        </div>
+                      )}
+                      {item.Status === "Rejected" && (
+                        <div className="expense-state-box rejected-exp-class">
+                          <p className="mb-0">Rejected</p>
                         </div>
                       )}
                     </td>
