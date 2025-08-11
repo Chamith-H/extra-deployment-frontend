@@ -1,0 +1,430 @@
+import { useEffect, useRef, useState } from "react";
+import PageTitle from "../../shared/common/PageTitle";
+import "../../../styles/content/administration/Role.css";
+import TableInput from "../../shared/inputs/TableInput";
+import TableDropdown from "../../shared/inputs/TableDropdown";
+import Pagination from "../../shared/common/Pagination";
+import { get_paginatedExpenses } from "../../../services/controllers/expense.controller";
+import { dateFetcher } from "../../../services/shared/timefetcher";
+import "../../../styles/content/financing/Expense.css";
+import SideModal from "../../shared/common/SideModal";
+import ExpenseView from "./imports/ExpenseView";
+import AppLoader from "../../shared/common/AppLoader";
+
+export default function Expenses() {
+  const permissions = [
+    {
+      label: "Not-Filtered",
+      value: "ANY",
+    },
+    {
+      label: "All-Enabled",
+      value: "ALL",
+    },
+    {
+      label: "All-Disabled",
+      value: "NONE",
+    },
+  ];
+
+  const statuses = [
+    {
+      label: "All",
+      value: "All",
+    },
+    {
+      label: "Active",
+      value: "true",
+    },
+    {
+      label: "Inactive",
+      value: "false",
+    },
+  ];
+
+  const orders = [
+    {
+      label: "Descending",
+      value: "descending",
+    },
+    {
+      label: "Ascending",
+      value: "Ascending",
+    },
+  ];
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [currentStatus, setCurrentStatus] = useState("");
+  const [selectedData, setSelectedData] = useState<any>(null);
+  const [showView, setShowView] = useState(false);
+
+  const [filters, setFilters] = useState({
+    name: "",
+    permission: "ANY",
+    status: "All",
+    action: "descending",
+  });
+
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageCount: 1,
+    dataCount: 0,
+  });
+
+  const getData = async (page: number) => {
+    setIsLoading(true);
+    const response = await get_paginatedExpenses({}, page);
+
+    setPagination({
+      currentPage: response.page,
+      pageCount: response.pageCount,
+      dataCount: response.totalCount,
+    });
+
+    const responseDataMapper = response.data.map((r_data: any) => {
+      if (!r_data.Status) {
+        r_data.Status = "Pending";
+      }
+
+      if (r_data.JobID !== "") {
+        r_data.Category = "Jobs";
+        r_data.RefID = r_data.JobID;
+      } else if (r_data.JourneyID !== "") {
+        r_data.Category = "Journeys";
+        r_data.RefID = r_data.JourneyID;
+      } else if (r_data.JobID === "" && r_data.JourneyID === "") {
+        r_data.Category = "General";
+        r_data.RefID = "___";
+      }
+
+      return r_data;
+    });
+
+    setData(responseDataMapper);
+    setIsLoading(false);
+  };
+
+  const handle_filterTable = (filterObj: any) => {
+    console.log(filterObj);
+  };
+
+  const viewData = (expenseID: string, status: string, allData: any) => {
+    setSelectedId(expenseID);
+    setCurrentStatus(status);
+    setSelectedData(allData);
+    setShowView(true);
+  };
+
+  const reloadData = () => {
+    setShowView(false);
+    getData(pagination.currentPage);
+  };
+
+  //!---
+
+  useEffect(() => {
+    getData(1);
+  }, []);
+
+  const firstColRef = useRef<HTMLTableCellElement>(null);
+  const [dynamicWidth, setDynamicWidth] = useState("auto");
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.screen.width;
+
+      if (firstColRef.current) {
+        const totalWidth = screenWidth;
+        const firstColWidth = firstColRef.current.offsetWidth;
+        const remaining = totalWidth - firstColWidth;
+        setDynamicWidth(`${remaining / 4}px`);
+      }
+    };
+
+    // Initial calculation
+    handleResize();
+
+    // Recalculate on window resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div>
+      <PageTitle
+        title="EXPENSES"
+        module="Financing"
+        section="Expenses"
+        actionName="NONE"
+      />
+
+      <div className="mt-3 table-border-align p-4 bg-white table-container">
+        {isLoading && (
+          <div className="my-5 py-5">
+            <AppLoader />
+          </div>
+        )}
+
+        {!isLoading && (
+          <table className="custom-table expense-table">
+            <thead>
+              <tr>
+                <th
+                  ref={firstColRef}
+                  className="table-head-background right-bdr"
+                >
+                  <div className="table-head d-flex flex-column">
+                    <p>&nbsp;</p>
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Expense ID</p>
+                    <TableInput
+                      type="text"
+                      placeholder="Enter role name"
+                      value={filters.name}
+                      onChange={(value: any) =>
+                        setFilters({ ...filters, name: value })
+                      }
+                      onSearch={(value: any) =>
+                        handle_filterTable({ ...filters, name: value })
+                      }
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Category</p>
+                    <TableDropdown
+                      value={filters.permission}
+                      options={permissions}
+                      onChange={(option: any) => {
+                        setFilters({ ...filters, permission: option.value });
+                        handle_filterTable({
+                          ...filters,
+                          permission: option.value,
+                        });
+                      }}
+                      loading={false}
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Reference ID</p>
+                    <TableInput
+                      type="text"
+                      placeholder="Enter role name"
+                      value={filters.name}
+                      onChange={(value: any) =>
+                        setFilters({ ...filters, name: value })
+                      }
+                      onSearch={(value: any) =>
+                        handle_filterTable({ ...filters, name: value })
+                      }
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Type</p>
+                    <TableDropdown
+                      value={filters.status}
+                      options={statuses}
+                      onChange={(option: any) => {
+                        setFilters({ ...filters, status: option.value });
+                        handle_filterTable({
+                          ...filters,
+                          status: option.value,
+                        });
+                      }}
+                      loading={false}
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Amount (LKR)</p>
+                    <TableInput
+                      type="text"
+                      placeholder="Enter role name"
+                      value={filters.name}
+                      onChange={(value: any) =>
+                        setFilters({ ...filters, name: value })
+                      }
+                      onSearch={(value: any) =>
+                        handle_filterTable({ ...filters, name: value })
+                      }
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Requester ID</p>
+                    <TableInput
+                      type="text"
+                      placeholder="Enter role name"
+                      value={filters.name}
+                      onChange={(value: any) =>
+                        setFilters({ ...filters, name: value })
+                      }
+                      onSearch={(value: any) =>
+                        handle_filterTable({ ...filters, name: value })
+                      }
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Created Date</p>
+                    <TableInput
+                      type="text"
+                      placeholder="Enter role name"
+                      value={filters.name}
+                      onChange={(value: any) =>
+                        setFilters({ ...filters, name: value })
+                      }
+                      onSearch={(value: any) =>
+                        handle_filterTable({ ...filters, name: value })
+                      }
+                    />
+                  </div>
+                </th>
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Status</p>
+                    <TableDropdown
+                      value={filters.status}
+                      options={statuses}
+                      onChange={(option: any) => {
+                        setFilters({ ...filters, status: option.value });
+                        handle_filterTable({
+                          ...filters,
+                          status: option.value,
+                        });
+                      }}
+                      loading={false}
+                    />
+                  </div>
+                </th>
+
+                <th
+                  style={{ width: dynamicWidth }}
+                  className="table-head-background"
+                >
+                  <div className="table-head">
+                    <p>Actions</p>
+                    <TableDropdown
+                      value={filters.action}
+                      options={orders}
+                      onChange={(option: any) => {
+                        setFilters({ ...filters, action: option.value });
+                        handle_filterTable({
+                          ...filters,
+                          action: option.value,
+                        });
+                      }}
+                      loading={false}
+                    />
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            {data && data.length !== 0 && (
+              <tbody>
+                {data.map((item: any, i: number) => (
+                  <tr key={i}>
+                    <td className="bold-style right-bdr">
+                      {i + (pagination.currentPage - 1) * 10 + 1}
+                    </td>
+                    <td className="normal-style">{item.ExpenseID}</td>
+                    <td className="normal-style">{item.Category}</td>
+                    <td className="normal-style">{item.RefID}</td>
+                    <td className="normal-style">{item.Type}</td>
+                    <td className="normal-style">{item.Amount}</td>
+                    <td className="normal-style">{item.CreatedBy}</td>
+                    <td className="normal-style">
+                      {dateFetcher(item.CreatedDate)}
+                    </td>
+
+                    <td className="normal-style">
+                      {item.Status === "Pending" && (
+                        <div className="expense-state-box pending-exp-class">
+                          <p className="mb-0">Pending</p>
+                        </div>
+                      )}
+                      {item.Status !== "Pending" && (
+                        <div className="expense-state-box approved-exp-class">
+                          <p className="mb-0">Approved</p>
+                        </div>
+                      )}
+                    </td>
+
+                    <td className="normal-style">
+                      <button
+                        className="view-button"
+                        onClick={() =>
+                          viewData(item.ExpenseID, item.Status, item)
+                        }
+                      >
+                        <i className="bi bi-file-earmark-richtext"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
+          </table>
+        )}
+      </div>
+
+      <Pagination
+        pagination={pagination}
+        changePage={(page: number) => getData(page)}
+      />
+
+      <SideModal
+        visible={showView}
+        title="VIEW EXPENSE"
+        image="budget.png"
+        closeModal={() => setShowView(false)}
+        content={
+          <ExpenseView
+            expenseId={selectedId}
+            status={currentStatus}
+            dataObj={selectedData}
+            reload={reloadData}
+          />
+        }
+      />
+    </div>
+  );
+}

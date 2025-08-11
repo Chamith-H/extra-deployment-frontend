@@ -1,0 +1,39 @@
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.expense-table {
+  border-collapse: collapse;
+  width: max-content; /* Allow table to grow beyond screen */
+  min-width: 100%;
+}
+
+.expense-table th:not(:first-child),
+.expense-table td:not(:first-child) {
+  min-width: 200px; /* All except first column */
+  max-width: 200px;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.expense-state-box p {
+  font-family: "R2";
+  font-size: 12px;
+  color: white;
+}
+
+.expense-state-box {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.pending-exp-class {
+  background-color: orangered;
+}
+
+.approved-exp-class {
+  background-color: green;
+}

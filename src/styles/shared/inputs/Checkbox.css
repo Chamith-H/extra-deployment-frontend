@@ -1,0 +1,13 @@
+.status-text-active {
+  margin-bottom: 0px;
+  font-size: 13px;
+  font-family: "R2";
+  color: rgb(0, 169, 17);
+}
+
+.status-text-inactive {
+  margin-bottom: 0px;
+  font-size: 13px;
+  font-family: "R2";
+  color: rgb(255, 0, 0);
+}

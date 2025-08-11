@@ -1,0 +1,25 @@
+.submit-button button {
+  border-style: none;
+  height: 36px;
+  min-width: 80px;
+  border-radius: 3px;
+  font-family: "R3";
+  font-size: 13px;
+}
+
+.action-button {
+  background-color: #00809d;
+  color: rgb(255, 255, 255);
+}
+
+.reset-button {
+  color: rgb(133, 133, 133);
+}
+
+.action-button:hover {
+  background-color: #006f88;
+}
+
+.reset-button:hover {
+  background-color: rgb(225, 225, 225);
+}
