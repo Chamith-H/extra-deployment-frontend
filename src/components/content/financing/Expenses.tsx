@@ -14,16 +14,20 @@ import AppLoader from "../../shared/common/AppLoader";
 export default function Expenses() {
   const permissions = [
     {
-      label: "Not-Filtered",
-      value: "ANY",
+      label: "All",
+      value: "All",
     },
     {
-      label: "All-Enabled",
-      value: "ALL",
+      label: "Jobs",
+      value: "Jobs",
     },
     {
-      label: "All-Disabled",
-      value: "NONE",
+      label: "Journeys",
+      value: "Journeys",
+    },
+    {
+      label: "General",
+      value: "General",
     },
   ];
 
@@ -33,12 +37,16 @@ export default function Expenses() {
       value: "All",
     },
     {
-      label: "Active",
-      value: "true",
+      label: "Pending",
+      value: "Pending",
     },
     {
-      label: "Inactive",
-      value: "false",
+      label: "Accepted",
+      value: "Accepted",
+    },
+    {
+      label: "Rejected",
+      value: "Rejected",
     },
   ];
 
@@ -53,6 +61,62 @@ export default function Expenses() {
     },
   ];
 
+  const types = [
+    {
+      label: "All",
+      value: "All",
+    },
+    { label: "Fuel", value: "Fuel" },
+    { label: "Meals", value: "Meals" },
+    { label: "Accommodation", value: "Accommodation" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Airfare", value: "Airfare" },
+    { label: "Train Fare", value: "Train Fare" },
+    { label: "Bus Fare", value: "Bus Fare" },
+    { label: "Taxi Fare", value: "Taxi Fare" },
+    { label: "Tolls", value: "Tolls" },
+    { label: "Parking", value: "Parking" },
+    { label: "Car Rental", value: "Car Rental" },
+    { label: "Mileage Reimbursement", value: "Mileage Reimbursement" },
+    { label: "Office Supplies", value: "Office Supplies" },
+    { label: "Internet", value: "Internet" },
+    { label: "Mobile Bill", value: "Mobile Bill" },
+    { label: "Courier Charges", value: "Courier Charges" },
+    { label: "Postage", value: "Postage" },
+    { label: "Printing", value: "Printing" },
+    { label: "Stationery", value: "Stationery" },
+    { label: "Client Entertainment", value: "Client Entertainment" },
+    { label: "Gifts", value: "Gifts" },
+    { label: "Event Fees", value: "Event Fees" },
+    { label: "Training", value: "Training" },
+    { label: "Conference Fees", value: "Conference Fees" },
+    { label: "Seminar Fees", value: "Seminar Fees" },
+    { label: "Software Subscription", value: "Software Subscription" },
+    { label: "Hardware Purchase", value: "Hardware Purchase" },
+    { label: "Utilities", value: "Utilities" },
+    { label: "Cleaning Services", value: "Cleaning Services" },
+    { label: "Maintenance", value: "Maintenance" },
+    { label: "Repairs", value: "Repairs" },
+    { label: "Legal Fees", value: "Legal Fees" },
+    { label: "Consulting Fees", value: "Consulting Fees" },
+    { label: "Advertising", value: "Advertising" },
+    { label: "Marketing", value: "Marketing" },
+    { label: "Travel Insurance", value: "Travel Insurance" },
+    { label: "Health Insurance", value: "Health Insurance" },
+    { label: "Bank Charges", value: "Bank Charges" },
+    { label: "Loan Interest", value: "Loan Interest" },
+    { label: "Depreciation", value: "Depreciation" },
+    { label: "Recruitment", value: "Recruitment" },
+    { label: "Employee Bonus", value: "Employee Bonus" },
+    { label: "Petty Cash", value: "Petty Cash" },
+    { label: "Medical Expenses", value: "Medical Expenses" },
+    { label: "Uniforms", value: "Uniforms" },
+    { label: "Security", value: "Security" },
+    { label: "Subscription Fees", value: "Subscription Fees" },
+    { label: "IT Support", value: "IT Support" },
+    { label: "Business Development", value: "Business Development" },
+    { label: "Miscellaneous", value: "Miscellaneous" },
+  ];
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState("");
@@ -62,9 +126,10 @@ export default function Expenses() {
 
   const [filters, setFilters] = useState({
     name: "",
-    permission: "ANY",
+    permission: "All",
     status: "All",
     action: "descending",
+    type: "All",
   });
 
   const [pagination, setPagination] = useState({
@@ -187,7 +252,7 @@ export default function Expenses() {
                     <p>Expense ID</p>
                     <TableInput
                       type="text"
-                      placeholder="Enter role name"
+                      placeholder="Enter expense ID"
                       value={filters.name}
                       onChange={(value: any) =>
                         setFilters({ ...filters, name: value })
@@ -226,7 +291,7 @@ export default function Expenses() {
                     <p>Reference ID</p>
                     <TableInput
                       type="text"
-                      placeholder="Enter role name"
+                      placeholder="Enter reference ID"
                       value={filters.name}
                       onChange={(value: any) =>
                         setFilters({ ...filters, name: value })
@@ -244,8 +309,8 @@ export default function Expenses() {
                   <div className="table-head">
                     <p>Type</p>
                     <TableDropdown
-                      value={filters.status}
-                      options={statuses}
+                      value={filters.type}
+                      options={types}
                       onChange={(option: any) => {
                         setFilters({ ...filters, status: option.value });
                         handle_filterTable({
@@ -265,7 +330,7 @@ export default function Expenses() {
                     <p>Amount (LKR)</p>
                     <TableInput
                       type="text"
-                      placeholder="Enter role name"
+                      placeholder="Enter amount"
                       value={filters.name}
                       onChange={(value: any) =>
                         setFilters({ ...filters, name: value })
@@ -284,7 +349,7 @@ export default function Expenses() {
                     <p>Requester ID</p>
                     <TableInput
                       type="text"
-                      placeholder="Enter role name"
+                      placeholder="Enter requester ID"
                       value={filters.name}
                       onChange={(value: any) =>
                         setFilters({ ...filters, name: value })
@@ -303,7 +368,7 @@ export default function Expenses() {
                     <p>Created Date</p>
                     <TableInput
                       type="text"
-                      placeholder="Enter role name"
+                      placeholder="Enter a date"
                       value={filters.name}
                       onChange={(value: any) =>
                         setFilters({ ...filters, name: value })
