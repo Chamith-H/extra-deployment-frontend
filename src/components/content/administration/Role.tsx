@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import PageTitle from "../../shared/common/PageTitle";
-import { get_paginatedRoles } from "../../../services/controllers/role.controller";
+import {
+  delete_selectedRole,
+  get_paginatedRoles,
+} from "../../../services/controllers/role.controller";
 import "../../../styles/content/administration/Role.css";
 import TableInput from "../../shared/inputs/TableInput";
 import TableDropdown from "../../shared/inputs/TableDropdown";
@@ -8,6 +11,7 @@ import Pagination from "../../shared/common/Pagination";
 import SideModal from "../../shared/common/SideModal";
 import RoleForm from "./imports/RoleForm";
 import ConfirmationModal from "../../shared/common/ConfirmationModal";
+import AppLoader from "../../shared/common/AppLoader";
 
 export default function Role() {
   const permissions = [
@@ -56,6 +60,7 @@ export default function Role() {
   const [showView, setShowView] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     name: "",
@@ -71,15 +76,19 @@ export default function Role() {
   });
 
   const getData = async (page: number) => {
-    const response = await get_paginatedRoles({}, page);
-    console.log(response);
+    setIsLoading(true);
 
-    setPagination({
-      currentPage: response.page,
-      pageCount: response.pageCount,
-      dataCount: response.totalCount,
-    });
-    setData(response.data);
+    const response = await get_paginatedRoles({}, page);
+
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   const handle_filterTable = (filterObj: any) => {
@@ -100,6 +109,18 @@ export default function Role() {
   const clickDelete = (data: any) => {
     setSelectedData(data);
     setShowDelete(true);
+  };
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const response = await delete_selectedRole(selectedData.id);
+
+    if (response) {
+      getData(pagination.currentPage);
+      setShowDelete(false);
+    } else {
+      setIsLoading(false);
+    }
   };
 
   const sync_afterAction = (response: any) => {
@@ -231,14 +252,27 @@ export default function Role() {
             </tr>
           </thead>
 
-          {data && data.length !== 0 && (
+          {isLoading && (
+            <tbody>
+              <tr>
+                <td className="normal-style"></td>
+                <td className="loader-style" colSpan={4}>
+                  <div className="my-5 py-5">
+                    <AppLoader />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          )}
+
+          {!isLoading && data && data.length !== 0 && (
             <tbody>
               {data.map((item: any, i: number) => (
                 <tr key={i}>
                   <td className="bold-style right-bdr">
                     {i + (pagination.currentPage - 1) * 10 + 1}
                   </td>
-                  <td className="normal-style">{item.name}</td>
+                  <td className="normal-style f-item">{item.name}</td>
                   <td className="normal-style">{item.accesses.length}</td>
                   <td className="bold-style">
                     {item.status && (
@@ -294,7 +328,13 @@ export default function Role() {
         title="EDIT USER ROLE"
         image="role.png"
         closeModal={() => setShowEdit(false)}
-        content={<RoleForm mode="Edit" data={selectedData} />}
+        content={
+          <RoleForm
+            mode="Edit"
+            data={selectedData}
+            sync={(response: any) => sync_afterAction(response)}
+          />
+        }
       />
 
       <ConfirmationModal
@@ -307,6 +347,7 @@ export default function Role() {
         description="This action is permanent and will remove all associated permissions. Proceed only if this role is no longer needed."
         visible={showDelete}
         closeModal={() => setShowDelete(false)}
+        onDelete={() => handleDelete()}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import SideModal from "../../shared/common/SideModal";
 import ConfirmationModal from "../../shared/common/ConfirmationModal";
 import UserForm from "./imports/UserForm";
 import { get_paginatedUsers } from "../../../services/controllers/user.controller";
+import AppLoader from "../../shared/common/AppLoader";
 
 export default function Users() {
   const permissions = [
@@ -56,6 +57,7 @@ export default function Users() {
   const [showView, setShowView] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     name: "",
@@ -71,16 +73,20 @@ export default function Users() {
   });
 
   const getData = async (page: number) => {
+    setIsLoading(true);
+
     const response = await get_paginatedUsers({}, page);
-    console.log(response);
 
-    setPagination({
-      currentPage: response.page,
-      pageCount: response.pageCount,
-      dataCount: response.totalCount,
-    });
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
 
-    setData(response.data);
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   const handle_filterTable = (filterObj: any) => {
@@ -266,14 +272,27 @@ export default function Users() {
             </tr>
           </thead>
 
-          {data && data.length !== 0 && (
+          {isLoading && (
+            <tbody>
+              <tr>
+                <td className="normal-style"></td>
+                <td className="loader-style" colSpan={6}>
+                  <div className="my-5 py-5">
+                    <AppLoader />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          )}
+
+          {!isLoading && data && data.length !== 0 && (
             <tbody>
               {data.map((item: any, i: number) => (
                 <tr key={i}>
                   <td className="bold-style right-bdr">
                     {i + (pagination.currentPage - 1) * 10 + 1}
                   </td>
-                  <td className="normal-style">{item.name}</td>
+                  <td className="normal-style f-item">{item.name}</td>
                   <td className="normal-style">{item.employId}</td>
                   <td className="normal-style">{item.role?.name}</td>
                   <td className="normal-style">{item.gender}</td>
@@ -297,12 +316,12 @@ export default function Users() {
                       <i className="bi bi-pencil-square"></i>
                     </button>
 
-                    <button
+                    {/* <button
                       className="delete-button ms-1"
                       onClick={() => clickDelete(item)}
                     >
                       <i className="bi bi-trash"></i>
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}
@@ -331,7 +350,13 @@ export default function Users() {
         title="EDIT USER"
         image="user.png"
         closeModal={() => setShowEdit(false)}
-        content={<UserForm mode="Edit" data={selectedData} />}
+        content={
+          <UserForm
+            mode="Edit"
+            data={selectedData}
+            sync={(response: any) => sync_afterAction(response)}
+          />
+        }
       />
 
       <ConfirmationModal

@@ -31,13 +31,9 @@
 }
 
 .pending-exp-class {
-  background-color: orange;
+  background-color: orangered;
 }
 
 .approved-exp-class {
   background-color: green;
-}
-
-.rejected-exp-class {
-  background-color: red;
 }

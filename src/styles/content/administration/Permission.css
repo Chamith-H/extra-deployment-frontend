@@ -1,0 +1,48 @@
+.permissionTable table {
+  border-collapse: collapse;
+  border: 1px solid #e6e6e6;
+}
+
+.activeSp {
+  border: 1px solid #e6e6e6; /* Adjust color as needed */
+  border-bottom-style: none;
+  text-align: left;
+}
+
+.deactiveSp {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: #e6e6e6;
+}
+
+.deactiveSp span {
+  display: none;
+}
+
+.handBorder {
+  border: 1px solid #e6e6e6;
+}
+
+.tableHeadCol {
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+
+.permissionTable table th {
+  padding: 8px;
+  font-size: 12px;
+  font-family: "R3";
+  color: black;
+}
+
+.permissionTable table td {
+  padding: 8px;
+  font-size: 13px;
+  font-family: "R4";
+  color: black;
+}
+
+.mark-high-or {
+  font-family: "R3";
+  color: rgb(39, 39, 39);
+}

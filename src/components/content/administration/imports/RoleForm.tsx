@@ -3,7 +3,10 @@ import FormInput from "../../../shared/inputs/FormInput";
 import FormTextarea from "../../../shared/inputs/FormTextarea";
 import SubmitButton from "../../../shared/buttons/SubmitButton";
 import Checkbox from "../../../shared/inputs/Checkbox";
-import { create_newRole } from "../../../../services/controllers/role.controller";
+import {
+  create_newRole,
+  update_currentRole,
+} from "../../../../services/controllers/role.controller";
 
 export default function RoleForm(props: any) {
   const [inputs, setInputs] = useState({
@@ -28,6 +31,14 @@ export default function RoleForm(props: any) {
 
     if (props.mode === "Edit") {
       //
+      const response = await update_currentRole(props.data.id, inputs);
+
+      if (response) {
+        setIsSubmitting(false);
+        props.sync(response);
+      } else {
+        setIsSubmitting(false);
+      }
     } else {
       //
       const response = await create_newRole(inputs);

@@ -51,7 +51,12 @@ export default function ConfirmationModal(props: any) {
                 <h6 onClick={() => props.closeModal()} className="cancel-con">
                   CANCEL
                 </h6>
-                <h6 className="ms-3 delete-con">DELETE</h6>
+                <h6
+                  onClick={() => props.onDelete()}
+                  className="ms-3 delete-con"
+                >
+                  DELETE
+                </h6>
               </div>
             </div>
           </div>

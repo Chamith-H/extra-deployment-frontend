@@ -16,15 +16,11 @@
 }
 
 .pending-exp-view {
-  color: orange;
+  color: orangered;
 }
 
 .approve-exp-view {
   color: green;
-}
-
-.reject-exp-view {
-  color: red;
 }
 
 .exp-sub-title {

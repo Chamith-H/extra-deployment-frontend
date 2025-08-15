@@ -1,4 +1,4 @@
-import { GET, PAGINATE, POST } from "../api.service";
+import { DELETE, GET, PAGINATE, POST, PUT } from "../api.service";
 
 const controller = "role";
 
@@ -8,6 +8,14 @@ export async function get_paginatedRoles(data: any, page: number) {
 
 export async function create_newRole(data: any) {
   return await POST(controller, "create", data);
+}
+
+export async function update_currentRole(id: any, data: any) {
+  return await PUT(controller, `update/${id}`, data);
+}
+
+export async function delete_selectedRole(id: any) {
+  return await DELETE(controller, `remove/${id}`);
 }
 
 export async function get_roleDropdown() {
@@ -21,4 +29,22 @@ export async function get_roleDropdown() {
   });
 
   return responseMapper;
+}
+
+export async function get_permissionedRoleDropdown() {
+  const response = await GET(controller, "permissioned-roles");
+
+  const responseMapper = response.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id,
+      data: item,
+    };
+  });
+
+  return responseMapper;
+}
+
+export async function update_rolePermissions(data: any) {
+  return await POST(controller, "add-permission", data);
 }

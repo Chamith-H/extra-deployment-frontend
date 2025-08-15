@@ -1,4 +1,4 @@
-import { PAGINATE, POST } from "../api.service";
+import { GET, PAGINATE, POST, PUT } from "../api.service";
 
 const controller = "user";
 
@@ -8,4 +8,12 @@ export async function get_paginatedUsers(data: any, page: number) {
 
 export async function create_newUser(data: any) {
   return await POST(controller, "create", data);
+}
+
+export async function update_currentUser(id: any, data: any) {
+  return await PUT(controller, `update/${id}`, data);
+}
+
+export async function get_singleUser(id: string) {
+  return await GET(controller, `single/${id}`);
 }

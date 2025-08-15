@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import "../../styles/layout/MainLayout.css";
 import { Outlet, useNavigate } from "react-router-dom";
+import { MainEnum } from "../../configs/enums/main.enum";
 
 export default function MainLayout() {
   const navigate = useNavigate();
+
+  const [loggedUser, setLoggedUser] = useState({ name: "", role: "" });
+
+  const handleLogOut = () => {
+    localStorage.removeItem(MainEnum.APP_TOKEN);
+    localStorage.clear();
+
+    window.location.reload();
+  };
 
   const menu: any[] = [
     {
@@ -16,24 +26,20 @@ export default function MainLayout() {
         },
       ],
     },
-    // {
-    //   module: "Schedules",
-    //   image: "/images/menu/schedules.png",
-    //   children: [
-    //     {
-    //       section: "Jobs",
-    //       link: "/jobs",
-    //     },
-    //     {
-    //       section: "Journeys",
-    //       link: "/journeys",
-    //     },
-    //     {
-    //       section: "Expenses",
-    //       link: "/journeys",
-    //     },
-    //   ],
-    // },
+    {
+      module: "Schedules",
+      image: "/images/menu/schedules.png",
+      children: [
+        {
+          section: "Jobs",
+          link: "/jobs",
+        },
+        {
+          section: "Journeys",
+          link: "/journeys",
+        },
+      ],
+    },
     {
       module: "Financing",
       image: "/images/menu/cash.png",
@@ -58,7 +64,7 @@ export default function MainLayout() {
         },
         {
           section: "Permissions",
-          link: "/",
+          link: "/permissions",
         },
       ],
     },
@@ -122,6 +128,11 @@ export default function MainLayout() {
     setSelectedSection(linkObj.section);
     setAlreadyModule(linkObj.module);
 
+    const username = localStorage.getItem(MainEnum.USER_NAME) || "";
+    const rolename = localStorage.getItem(MainEnum.ROLE_NAME) || "";
+
+    setLoggedUser({ name: username, role: rolename });
+
     setIsLoading(false);
   };
 
@@ -135,70 +146,82 @@ export default function MainLayout() {
         <div className="Main-Layout d-flex">
           <div>
             <div className="Sider px-3 position-sticky sticky-top">
-              <div className="Sider-Logo">
-                <img className="logoimg" src="/images/logos/logo.jpg" alt="" />
-              </div>
+              <div>
+                <div className="Sider-Logo">
+                  <img
+                    className="logoimg"
+                    src="/images/logos/logo.jpg"
+                    alt=""
+                  />
+                </div>
 
-              <div className="menu-title mb-2 mt-4">
-                <p className="mb-0">MENU</p>
-              </div>
+                <div className="menu-title mb-2 mt-4">
+                  <p className="mb-0">MENU</p>
+                </div>
 
-              <div className="d-flex flex-column">
-                {menu.map((item: any) => (
-                  <div>
-                    <button
-                      className={
-                        selectedModule !== item.module
-                          ? "menu-button py-2"
-                          : "selected-button py-2"
-                      }
-                      onClick={() =>
-                        handle_menuClick(item.module, item.children)
-                      }
-                    >
-                      <div className="d-flex align-item-center">
-                        <img src={item.image} alt="" />
-                        <p>{item.module}</p>
-                      </div>
-                      {alreadyModule === item.module && (
-                        <i className="bi bi-circle-fill dot-iconer"></i>
-                      )}
-                    </button>
-
+                <div className="d-flex flex-column">
+                  {menu.map((item: any) => (
                     <div>
-                      {item.module === selectedModule &&
-                        childrenArray &&
-                        childrenArray.length !== 0 && (
-                          <div className="d-flex flex-column side-border ms-4">
-                            {childrenArray.map((child: any, j: number) => (
-                              <div className="d-flex align-items-center">
-                                <div className="border-lefter"></div>
-                                <button
-                                  onClick={() =>
-                                    handle_sectionClick(
-                                      child.section,
-                                      item.module,
-                                      child.link
-                                    )
-                                  }
-                                  className={
-                                    child.section !== selectedSection
-                                      ? "section-button"
-                                      : "selected-section-button"
-                                  }
-                                >
-                                  {child.section}
-                                </button>
-                                {j + 1 === childrenArray.length && (
-                                  <div className="white-dropper"></div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
+                      <button
+                        className={
+                          selectedModule !== item.module
+                            ? "menu-button py-2"
+                            : "selected-button py-2"
+                        }
+                        onClick={() =>
+                          handle_menuClick(item.module, item.children)
+                        }
+                      >
+                        <div className="d-flex align-item-center">
+                          <img src={item.image} alt="" />
+                          <p>{item.module}</p>
+                        </div>
+                        {alreadyModule === item.module && (
+                          <i className="bi bi-circle-fill dot-iconer"></i>
                         )}
+                      </button>
+
+                      <div>
+                        {item.module === selectedModule &&
+                          childrenArray &&
+                          childrenArray.length !== 0 && (
+                            <div className="d-flex flex-column side-border ms-4">
+                              {childrenArray.map((child: any, j: number) => (
+                                <div className="d-flex align-items-center">
+                                  <div className="border-lefter"></div>
+                                  <button
+                                    onClick={() =>
+                                      handle_sectionClick(
+                                        child.section,
+                                        item.module,
+                                        child.link
+                                      )
+                                    }
+                                    className={
+                                      child.section !== selectedSection
+                                        ? "section-button"
+                                        : "selected-section-button"
+                                    }
+                                  >
+                                    {child.section}
+                                  </button>
+                                  {j + 1 === childrenArray.length && (
+                                    <div className="white-dropper"></div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+
+              <div className="logout-btn pb-3">
+                <button onClick={handleLogOut}>
+                  <i className="bi bi-power"></i>&nbsp;Logout
+                </button>
               </div>
             </div>
           </div>
@@ -211,8 +234,8 @@ export default function MainLayout() {
                   <i className="bi bi-bell-fill me-4"></i>
                   <img src="/images/common/user.png" alt="" />
                   <div>
-                    <h6 className="mb-0">Chathura Hettiarachchi</h6>
-                    <p className="mb-0">Admin</p>
+                    <h6 className="mb-0">{loggedUser.name}</h6>
+                    <p className="mb-0">{loggedUser.role}</p>
                   </div>
                 </div>
               </div>

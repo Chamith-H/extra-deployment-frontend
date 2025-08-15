@@ -1,6 +1,14 @@
 import "../../../styles/shared/common/PageTitle.css";
 
 export default function PageTitle(props: any) {
+  const print = () => {
+    window.print();
+  };
+
+  const reload = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="Page-Title d-flex justify-content-between">
       <div>
@@ -14,11 +22,11 @@ export default function PageTitle(props: any) {
       </div>
 
       <div className="d-flex">
-        <button className="white-btn">
+        <button className="white-btn" onClick={reload}>
           <i className="bi bi-arrow-clockwise"></i>
         </button>
 
-        <button className="white-btn ms-1">
+        <button onClick={print} className="white-btn ms-1">
           <i className="bi bi-printer-fill"></i>
         </button>
         {props.actionName !== "NONE" && (

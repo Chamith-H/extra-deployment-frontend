@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import "../../../../styles/content/financing/imports/ExpenseView.css";
 import {
   approveExpense,
-  rejectExpense,
   viewExpense,
 } from "../../../../services/controllers/expense.controller";
 import AppLoader from "../../../shared/common/AppLoader";
 import { dateFetcher } from "../../../../services/shared/timefetcher";
 import SubmitButton from "../../../shared/buttons/SubmitButton";
+import ContentLoader from "../../../shared/common/ContentLoader";
 
 export default function ExpenseView(props: any) {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [selectedData, setSelectedData] = useState<any>(null);
 
   const [isApproving, setIsApproving] = useState(false);
-  const [isRejecting, setIsRejecting] = useState(false);
 
   const getSingleData = async () => {
     setIsLoadingData(true);
@@ -29,19 +28,6 @@ export default function ExpenseView(props: any) {
     const response = await approveExpense(props.expenseId);
 
     if (response) {
-      setIsApproving(false);
-      setIsApproving(false);
-      props.reload();
-    }
-  };
-
-  const onReject = async () => {
-    setIsRejecting(true);
-
-    const response = await rejectExpense(props.expenseId);
-
-    if (response) {
-      setIsRejecting(false);
       setIsApproving(false);
       props.reload();
     }
@@ -60,19 +46,19 @@ export default function ExpenseView(props: any) {
         </div>
 
         <div className="Expense-Status">
-          {props.status === "Pending" && (
-            <p className="mb-0 pending-exp-view">{props.status}</p>
-          )}
-          {props.status === "Approved" && (
-            <p className="mb-0 approve-exp-view">{props.status}</p>
-          )}
-          {props.status === "Rejected" && (
-            <p className="mb-0 reject-exp-view">{props.status}</p>
-          )}
+          <p
+            className={
+              props.status === "Pending"
+                ? "mb-0 pending-exp-view"
+                : "mb-0 approve-exp-view"
+            }
+          >
+            {props.status}
+          </p>
         </div>
       </div>
 
-      <div>{isLoadingData && <AppLoader />}</div>
+      <div>{isLoadingData && <ContentLoader />}</div>
       <div>
         {!isLoadingData && selectedData && (
           <div>
@@ -192,11 +178,6 @@ export default function ExpenseView(props: any) {
             {props.status === "Pending" && (
               <div className="mt-2">
                 <SubmitButton
-                  negative={true}
-                  n_label="Reject"
-                  n_loadingText="Please wait"
-                  n_getAction={onReject}
-                  n_submitting={isRejecting}
                   label="Approve"
                   getAction={onApprove}
                   submitting={isApproving}

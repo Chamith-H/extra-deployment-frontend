@@ -22,3 +22,25 @@
   font-family: "R5";
   src: url("/fonts/Roboto-Thin.ttf");
 }
+
+/* Scrollbar Track */
+::-webkit-scrollbar {
+  width: 7px; /* vertical scrollbar width */
+  height: 5px; /* horizontal scrollbar height */
+}
+
+/* Scrollbar Track background */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* optional */
+}
+
+/* Scrollbar Thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #1588a1;
+  border-radius: 20px; /* make it rounded if you want */
+}
+
+/* Scrollbar Thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #15badf;
+}

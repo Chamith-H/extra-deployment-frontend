@@ -5,7 +5,7 @@
   height: 100%;
   width: 100%;
   display: none;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.082);
   z-index: 1000;
 }
 
@@ -17,7 +17,20 @@
   position: fixed;
   top: 55px;
   left: 270px;
-  width: 330px;
+  width: 380px;
+  height: calc(100% - 55px);
+  background-color: #ffffff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+  z-index: 1001;
+}
+
+.modal-long {
+  position: fixed;
+  top: 55px;
+  left: 270px;
+  width: calc(100vw - 400px);
   height: calc(100% - 55px);
   background-color: #ffffff;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
@@ -63,4 +76,11 @@
 .modal-content-body {
   height: calc(100% - 50px);
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.modal-content-body-long {
+  height: calc(100% - 50px);
+  overflow-y: hidden;
+  overflow-x: hidden;
 }

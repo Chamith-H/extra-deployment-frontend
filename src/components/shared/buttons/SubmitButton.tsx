@@ -13,27 +13,6 @@ export default function SubmitButton(props: any) {
         </button>
       )}
 
-      {props.negative && (
-        <button
-          type={props.type}
-          onClick={() => props.n_getAction()}
-          className="ms-1 action-button-n px-3"
-        >
-          {!props.n_submitting && <span>{props.n_label}</span>}
-
-          {props.n_submitting && (
-            <span className="d-flex flex-row align-items-center">
-              <div
-                className="spinner-border text-white align-middle me-2"
-                role="status"
-                style={{ width: "20px", height: "20px" }}
-              ></div>
-              {props.n_loadingText}
-            </span>
-          )}
-        </button>
-      )}
-
       <button
         type={props.type}
         onClick={() => props.getAction()}
@@ -46,7 +25,7 @@ export default function SubmitButton(props: any) {
             <div
               className="spinner-border text-white align-middle me-2"
               role="status"
-              style={{ width: "20px", height: "20px" }}
+              style={{ width: "17px", height: "17px" }}
             ></div>
             {props.loadingText}
           </span>

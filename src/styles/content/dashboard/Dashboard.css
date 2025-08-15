@@ -1,0 +1,54 @@
+.Dash-Card img {
+  width: 35px;
+}
+
+.Dash-Card {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(255, 255, 255);
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e7e7e7;
+  align-items: center;
+}
+
+.Dash-Card p {
+  font-family: "R3";
+  font-size: 13px;
+  color: rgb(0, 0, 0);
+}
+
+.Dash-Card h6 {
+  font-family: "R2";
+  font-size: 30px;
+  color: rgb(0, 0, 0);
+}
+
+.dash-img {
+  background-color: #e1f8f3;
+  padding: 10px;
+  border-radius: 100%;
+}
+
+.Pie-Card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e7e7e7;
+  align-items: center;
+}
+
+.Card-Intro {
+  width: 100%;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: #e7e7e7;
+}
+
+.Card-Intro p {
+  font-family: "R3";
+  font-size: 13px;
+  color: black;
+}

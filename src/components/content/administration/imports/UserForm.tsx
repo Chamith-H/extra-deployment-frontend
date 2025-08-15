@@ -5,7 +5,10 @@ import SubmitButton from "../../../shared/buttons/SubmitButton";
 import Checkbox from "../../../shared/inputs/Checkbox";
 import { get_roleDropdown } from "../../../../services/controllers/role.controller";
 import FormDropdown from "../../../shared/inputs/FormDropdown";
-import { create_newUser } from "../../../../services/controllers/user.controller";
+import {
+  create_newUser,
+  update_currentUser,
+} from "../../../../services/controllers/user.controller";
 
 export default function UserForm(props: any) {
   const [inputs, setInputs] = useState({
@@ -54,6 +57,14 @@ export default function UserForm(props: any) {
 
     if (props.mode === "Edit") {
       //
+      const response = await update_currentUser(props.data.id, inputs);
+
+      if (response) {
+        setIsSubmitting(false);
+        props.sync(response);
+      } else {
+        setIsSubmitting(false);
+      }
     } else {
       //
       const response = await create_newUser(inputs);
@@ -72,7 +83,7 @@ export default function UserForm(props: any) {
       setInputs({
         name: props.data.name,
         employId: props.data.employId,
-        role: props.data.role,
+        role: props.data.role.id,
         gender: props.data.gender,
         email: props.data.email,
         description: props.data.description,
@@ -108,7 +119,7 @@ export default function UserForm(props: any) {
       const formData = {
         name: props.data.name,
         employId: props.data.employId,
-        role: props.data.role,
+        role: props.data.role.id,
         gender: props.data.gender,
         email: props.data.email,
         description: props.data.description,

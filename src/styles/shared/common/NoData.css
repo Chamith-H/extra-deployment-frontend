@@ -1,0 +1,18 @@
+.No-Data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(245, 245, 245);
+}
+
+.No-Data img {
+  height: 100px;
+}
+
+.No-Data p {
+  font-family: "R3";
+  font-size: 13px;
+  color: grey;
+  margin-top: 5px;
+}

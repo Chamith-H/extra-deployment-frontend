@@ -1,0 +1,40 @@
+.content-loader {
+  width: 353px;
+  height: 150px;
+  margin: auto;
+  display: block;
+  position: relative;
+  background: #fff;
+  box-sizing: border-box;
+}
+.content-loader::after {
+  content: "";
+  width: calc(100%);
+  height: calc(100% - 30px);
+  top: 15px;
+  position: absolute;
+  background-image: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 80%
+    ),
+    linear-gradient(#eeeeee 56px, transparent 0),
+    linear-gradient(#eeeeee 24px, transparent 0),
+    linear-gradient(#eeeeee 18px, transparent 0),
+    linear-gradient(#eeeeee 66px, transparent 0);
+  background-repeat: no-repeat;
+  background-size: 75px 130px, 55px 56px, 160px 30px, 260px 20px, 290px 56px;
+  background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+  box-sizing: border-box;
+  animation: animcontent-loader 1s linear infinite;
+}
+
+@keyframes animcontent-loader {
+  0% {
+    background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+  }
+  100% {
+    background-position: 150% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+  }
+}

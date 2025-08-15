@@ -1,0 +1,61 @@
+.login-page {
+  background-image: url("/images/common/loginBack.jpg");
+  background-size: cover;
+  background-position: right;
+}
+
+.login-box {
+  width: 360px;
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Login-Align {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  background-color: rgba(0, 0, 0, 0.055);
+}
+
+.login-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #e5e5e5;
+}
+
+.login-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginLogo {
+  height: 25px;
+}
+
+.login-brand p {
+  font-size: 12px;
+  font-family: "R3";
+  color: #7a7a7a;
+}
+
+.login-header h3 {
+  font-family: "R2";
+  font-size: 14px;
+  color: #005d72;
+}
+
+.loginUser {
+  height: 20px;
+}
+
+.loginbodyimg {
+  height: 200px;
+}

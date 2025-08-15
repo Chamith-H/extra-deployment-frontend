@@ -1,0 +1,301 @@
+.react-tabs__tab {
+  font-family: "R3";
+  font-size: 12px;
+  color: #aaaaaa;
+  border-bottom-color: #00809d !important;
+}
+
+/* Optional: Style active tab */
+.react-tabs__tab--selected {
+  font-family: "R2";
+  color: #00809d !important;
+  border-color: #00809d !important;
+}
+
+.react-tabs__tab-list {
+  border-bottom: 1px solid #00809d !important; /* Bottom border under tabs */
+}
+
+.tab-main-body {
+  height: calc(100vh - 237px);
+  overflow: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+}
+
+.tab-body-title {
+  font-family: "R3";
+  font-size: 12px;
+  color: #797979;
+}
+
+.tab-sub-box {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e6e6e6;
+}
+
+.tab-body-sub-title {
+  font-family: "R2";
+  font-size: 12px;
+  color: #000000;
+}
+
+.tab-body-content {
+  font-family: "R4";
+  font-size: 13px;
+  color: #000000;
+}
+
+.action-box-view h5 {
+  font-family: "R2";
+  font-size: 13px;
+  color: #000000;
+}
+
+.action-status {
+  font-family: "R2";
+  font-size: 13px;
+  color: #000000;
+}
+
+.action-reason {
+  font-family: "R4";
+  font-size: 13px;
+  color: #000000;
+}
+
+.seperator-line {
+  border-top-style: solid;
+  border-width: 1px;
+  border-color: #e6e6e6;
+}
+
+.des-explain {
+  font-family: "R3";
+  font-size: 13px;
+  color: rgb(0, 0, 0);
+}
+
+.action-reason span {
+  font-family: "R3";
+  color: #6b6b6b;
+}
+
+.going-up-arrow {
+  color: #bebebe;
+}
+
+.modal-table-view {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.expense-jj-table {
+  border-collapse: collapse;
+  width: max-content; /* Allow table to grow beyond screen */
+  min-width: 100%;
+}
+
+.expense-jj-table th:not(:first-child),
+.expense-jj-table td:not(:first-child) {
+  min-width: 160px; /* All except first column */
+  max-width: 100px;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.action-journey-o {
+  font-family: "R4";
+  font-size: 12px;
+  color: #000000;
+}
+
+.action-journey-o span {
+  font-family: "R3";
+  color: #6b6b6b;
+}
+
+.Start-Class {
+  color: #00a2ff;
+}
+
+.Hold-Class {
+  color: #617bb4;
+}
+
+.Resume-Class {
+  color: orange;
+}
+
+.Complete-Class {
+  color: green;
+}
+
+.Accept-Class {
+  color: rgb(0, 187, 0);
+}
+
+.Reject-Class {
+  color: red;
+}
+
+.Checkout-Class {
+  color: rgb(110, 0, 236);
+}
+
+.Chackin-Class {
+  color: rgb(255, 94, 0);
+}
+
+.Sign-img {
+  border-style: solid;
+  width: 100%;
+  border-width: 1px;
+  border-color: #e6e6e6;
+  height: 100%;
+}
+
+.Sign-img img {
+  width: 100%;
+}
+
+.Fsr-imgs {
+  border-style: solid;
+  width: 100%;
+  border-width: 1px;
+  border-color: #e6e6e6;
+  height: 100%;
+}
+
+.Login-imgs {
+  border-style: solid;
+  width: 100%;
+  display: flex;
+  border-width: 1px;
+  border-color: #e6e6e6;
+  height: 100%;
+}
+
+.Login-imgs img {
+  height: 200px;
+}
+
+.Open-Back-Class {
+  background-color: red;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Accepted-Back-Class {
+  background-color: #00bb00;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Rejected-Back-Class {
+  background-color: red;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Checked-In-Back-Class {
+  background-color: #ff5e00;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.In-Progress-Back-Class {
+  background-color: #00a2ff;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Hold-Back-Class {
+  background-color: #617bb4;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Checkout-Back-Class {
+  background-color: #6e00ec;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Completed-Back-Class {
+  background-color: green;
+  color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+}
+
+.Job-Final-Status p {
+  font-family: "R2";
+  font-size: 12px;
+  margin: 0;
+}
+
+.Low-Priority {
+  font-family: "R2";
+  font-size: 13px;
+  color: rgb(0, 187, 0);
+}
+
+.Medium-Priority {
+  font-family: "R2";
+  font-size: 13px;
+  color: rgb(241, 145, 0);
+}
+
+.High-Priority {
+  font-family: "R2";
+  font-size: 13px;
+  color: red;
+}
+
+.given-width {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.job-action-box-x {
+  width: 170px;
+}
+
+.main-act-box {
+  width: 100%;
+  overflow-x: auto;
+}
