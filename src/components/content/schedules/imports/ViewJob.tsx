@@ -12,6 +12,9 @@ import {
 } from "../../../../services/controllers/job.controller";
 import { selectedExpenses } from "../../../../services/controllers/expense.controller";
 import NoData from "../../../shared/common/NoData";
+import SideModal from "../../../shared/common/SideModal";
+import ExpenseView from "../../financing/imports/ExpenseView";
+import InsideSideModal from "../../../shared/common/InsideSideModel";
 
 export default function ViewJob(props: any) {
   const [loadingTechnician, setLoadingTechnician] = useState(false);
@@ -30,6 +33,11 @@ export default function ViewJob(props: any) {
 
   const firstColRef = useRef<HTMLTableCellElement>(null);
   const [dynamicWidth, setDynamicWidth] = useState("auto");
+
+  const [showView, setShowView] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
+  const [currentStatus, setCurrentStatus] = useState("");
+  const [selectedData, setSelectedData] = useState<any>(null);
 
   const getTechnicianData = async () => {
     setLoadingTechnician(true);
@@ -97,9 +105,27 @@ export default function ViewJob(props: any) {
     setLoadingExpenses(true);
 
     const response = await selectedExpenses("JobID", props.dataObj.JobID);
-    console.log(response);
 
-    setExpenseData(response);
+    const responseDataMapper = response.map((r_data: any) => {
+      if (!r_data.Status) {
+        r_data.Status = "Pending";
+      }
+
+      if (r_data.JobID !== "") {
+        r_data.Category = "Jobs";
+        r_data.RefID = r_data.JobID;
+      } else if (r_data.JourneyID !== "") {
+        r_data.Category = "Journeys";
+        r_data.RefID = r_data.JourneyID;
+      } else if (r_data.JobID === "" && r_data.JourneyID === "") {
+        r_data.Category = "General";
+        r_data.RefID = "___";
+      }
+
+      return r_data;
+    });
+
+    setExpenseData(responseDataMapper);
     setLoadingExpenses(false);
   };
 
@@ -109,6 +135,18 @@ export default function ViewJob(props: any) {
     getProgressActions();
     getExpenses();
   }, []);
+
+  const viewData = (expenseID: string, status: string, allData: any) => {
+    setSelectedId(expenseID);
+    setCurrentStatus(status);
+    setSelectedData(allData);
+    setShowView(true);
+  };
+
+  const reloadData = () => {
+    setShowView(false);
+    getExpenses();
+  };
 
   return (
     <div>
@@ -753,7 +791,12 @@ export default function ViewJob(props: any) {
                             </td>
 
                             <td className="normal-style">
-                              <button className="view-button">
+                              <button
+                                onClick={() =>
+                                  viewData(item.ExpenseID, item.Status, item)
+                                }
+                                className="view-button"
+                              >
                                 <i className="bi bi-file-earmark-richtext"></i>
                               </button>
                             </td>
@@ -774,6 +817,21 @@ export default function ViewJob(props: any) {
           </TabPanel>
         </Tabs>
       </div>
+
+      <InsideSideModal
+        visible={showView}
+        title="VIEW EXPENSE"
+        image="budget.png"
+        closeModal={() => setShowView(false)}
+        content={
+          <ExpenseView
+            expenseId={selectedId}
+            status={currentStatus}
+            dataObj={selectedData}
+            reload={reloadData}
+          />
+        }
+      />
     </div>
   );
 }

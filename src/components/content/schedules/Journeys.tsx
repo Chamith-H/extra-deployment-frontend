@@ -5,13 +5,10 @@ import TableInput from "../../shared/inputs/TableInput";
 import TableDropdown from "../../shared/inputs/TableDropdown";
 import Pagination from "../../shared/common/Pagination";
 import AppLoader from "../../shared/common/AppLoader";
-import {
-  get_paginatedJobs,
-  get_paginatedJourneys,
-} from "../../../services/controllers/job.controller";
+import { get_paginatedJourneys } from "../../../services/controllers/job.controller";
 import { dateFetcher } from "../../../services/shared/timefetcher";
-import ViewJob from "./imports/ViewJob";
 import LongSideModal from "../../shared/common/LongSideModal";
+import ViewJourney from "./imports/ViewJourney";
 
 export default function Journeys() {
   const permissions = [
@@ -356,6 +353,7 @@ export default function Journeys() {
                       className="view-button"
                       onClick={() => {
                         setSelectedData(item);
+                        setShowView(true);
                       }}
                     >
                       <i className="bi bi-file-earmark-richtext"></i>
@@ -375,10 +373,10 @@ export default function Journeys() {
 
       <LongSideModal
         visible={showView}
-        title="JOB DETAILS"
+        title="JOURNEY DETAILS"
         image="job.png"
         closeModal={() => setShowView(false)}
-        content={<ViewJob dataObj={selectedData} />}
+        content={<ViewJourney dataObj={selectedData} />}
       />
     </div>
   );

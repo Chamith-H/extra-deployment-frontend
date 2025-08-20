@@ -1,0 +1,11 @@
+.no-map-view img {
+  height: 100px;
+}
+
+.no-map-view {
+  height: 405px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(245, 245, 245);
+}
