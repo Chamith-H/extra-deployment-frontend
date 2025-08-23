@@ -40,6 +40,14 @@
   align-items: center;
 }
 
+.Calendar-Card {
+  background-color: rgb(255, 255, 255);
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e7e7e7;
+  height: 100%;
+}
+
 .Card-Intro {
   width: 100%;
   border-bottom-style: solid;
@@ -51,4 +59,15 @@
   font-family: "R3";
   font-size: 13px;
   color: black;
+}
+
+.Card-Intro h6 {
+  font-family: "R2";
+  font-size: 13px;
+  color: black;
+}
+
+.dash-check p {
+  font-family: "R2";
+  font-size: 13px;
 }

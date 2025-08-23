@@ -17,3 +17,18 @@ export async function update_currentUser(id: any, data: any) {
 export async function get_singleUser(id: string) {
   return await GET(controller, `single/${id}`);
 }
+
+export async function get_userDrop() {
+  const response = await GET(controller, `user-drop`);
+  const responseMapper = response.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.employId,
+    };
+  });
+
+  return [
+    { label: "All Users / Technicians", value: "All" },
+    ...responseMapper,
+  ];
+}
