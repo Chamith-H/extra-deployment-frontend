@@ -10,30 +10,10 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import GoogleMapReact from "google-map-react";
 import { get_userDrop } from "../../../services/controllers/user.controller";
 import FormDropdown from "../../shared/inputs/FormDropdown";
+import LongSideModal from "../../shared/common/LongSideModal";
+import ViewJob from "../schedules/imports/ViewJob";
 
 const localizer = momentLocalizer(moment);
-
-// Marker component for map
-const MarkerComponent = ({ text, color }: any) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      whiteSpace: "nowrap",
-    }}
-  >
-    <i
-      style={{ color: color, fontSize: "20px" }}
-      className="bi bi-geo-alt-fill"
-    ></i>
-    <p
-      style={{ color: "white", fontSize: "12px", marginLeft: "1px" }}
-      className="mb-0"
-    >
-      {text}
-    </p>
-  </div>
-);
 
 export default function Dashboard() {
   const [loadingDashboard, setLoadingDashbord] = useState(false);
@@ -50,6 +30,39 @@ export default function Dashboard() {
   const [locations, setLocations] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
+
+  const [showView, setShowView] = useState(false);
+  const [selectedData, setSelectedData] = useState<any>(null);
+
+  const clickedJob = (jobId: string) => {
+    const job = jobs.find((j: any) => j.JobID === jobId);
+    setSelectedData(job);
+    setShowView(true);
+  };
+
+  // Marker component for map
+  const MarkerComponent = ({ text, color }: any) => (
+    <div
+      onClick={() => clickedJob(text)}
+      style={{
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <i
+        style={{ color: color, fontSize: "20px" }}
+        className="bi bi-geo-alt-fill"
+      ></i>
+      <p
+        style={{ color: "white", fontSize: "12px", marginLeft: "1px" }}
+        className="mb-0"
+      >
+        {text}
+      </p>
+    </div>
+  );
 
   const ackChkChecker = (upcomingLocations: any[]) => {
     if (upcomingLocations.length === 0) {
@@ -105,7 +118,8 @@ export default function Dashboard() {
     () =>
       jobs.map((job) => ({
         id: job.id,
-        title: `${job.Subject} - ${job.Customer}`,
+        jobId: job.JobID,
+        title: `${job.Subject} - ${job.Customer} -> ${job.JobID}`,
         start: new Date(job.PlannedStartDateTime),
         end: new Date(job.PlannedEndDateTime),
         priority: job.Priority,
@@ -160,7 +174,6 @@ export default function Dashboard() {
       setCounts(response.counts);
       setJobProgress(response.statuses);
       setJobs(response.openJobs);
-
       console.log(response.openJobs);
 
       let f_locations: any[] = [];
@@ -338,6 +351,7 @@ export default function Dashboard() {
                   toolbar={false}
                   popup
                   style={{ height: 455 }}
+                  onSelectEvent={(event: any) => clickedJob(event.jobId)}
                 />
               </div>
             </div>
@@ -430,6 +444,14 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      <LongSideModal
+        visible={showView}
+        title="JOB DETAILS"
+        image="job.png"
+        closeModal={() => setShowView(false)}
+        content={<ViewJob dataObj={selectedData} />}
+      />
     </div>
   );
 }
