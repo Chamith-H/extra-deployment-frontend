@@ -139,6 +139,8 @@ export default function Jobs() {
 
     const response = await get_paginatedJobs(filters, page);
 
+    console.log(response);
+
     if (response) {
       setPagination({
         currentPage: response.page,
@@ -381,7 +383,7 @@ export default function Jobs() {
                     {i + (pagination.currentPage - 1) * 10 + 1}
                   </td>
                   <td className="normal-style f-item">{item.JobID}</td>
-                  <td className="normal-style">{item.Technician}</td>
+                  <td className="normal-style">{item.technicianName}</td>
                   <td className="normal-style">
                     {item.Priority === "Low" && (
                       <h6 className="Low-Priority">Low</h6>

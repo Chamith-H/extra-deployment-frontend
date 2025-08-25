@@ -1,8 +1,8 @@
 import Axios from "axios";
 import { toast } from "react-toastify";
 
-// const BASE_URL = "http://127.0.0.1:3005";
-const BASE_URL = "https://extra-deployment-backend-production.up.railway.app";
+const BASE_URL = "http://127.0.0.1:3005";
+// const BASE_URL = "https://extra-deployment-backend-production.up.railway.app";
 
 //!--> PAGINATION
 export async function PAGINATE(
