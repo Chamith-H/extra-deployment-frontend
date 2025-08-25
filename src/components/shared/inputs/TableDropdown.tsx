@@ -9,6 +9,7 @@ type Props = {
   options: Option[];
   value: any;
   loading: boolean;
+  disabled?: boolean;
   onChange: (selected: Option | null) => void;
 };
 
@@ -17,6 +18,7 @@ export default function TableDropdown({
   options,
   onChange,
   loading,
+  disabled,
 }: Props) {
   const customStyles = {
     control: (base: any) => ({
@@ -76,7 +78,7 @@ export default function TableDropdown({
       placeholder="Select option"
       styles={customStyles}
       isLoading={loading}
-      isDisabled={loading}
+      isDisabled={loading || disabled}
     />
   );
 }

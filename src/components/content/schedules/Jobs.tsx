@@ -9,12 +9,13 @@ import { get_paginatedJobs } from "../../../services/controllers/job.controller"
 import { dateFetcher } from "../../../services/shared/timefetcher";
 import ViewJob from "./imports/ViewJob";
 import LongSideModal from "../../shared/common/LongSideModal";
+import TableDatePicker from "../../shared/inputs/TableDatePicker";
 
 export default function Jobs() {
   const permissions = [
     {
       label: "All",
-      value: "ANY",
+      value: "All",
     },
     {
       label: "Low",
@@ -71,12 +72,44 @@ export default function Jobs() {
 
   const orders = [
     {
-      label: "Descending",
-      value: "descending",
+      label: "Letest to top",
+      value: "DESC_ID",
     },
     {
-      label: "Ascending",
-      value: "Ascending",
+      label: "Oldest to top",
+      value: "ASC_ID",
+    },
+    {
+      label: "Job ID - (A to Z)",
+      value: "ASC_JobID",
+    },
+    {
+      label: "Job ID - (Z to A)",
+      value: "DESC_JobID",
+    },
+    {
+      label: "Priority - (L to H)",
+      value: "ASC_Priority",
+    },
+    {
+      label: "Priority - (H to L)",
+      value: "DESC_Priority",
+    },
+    {
+      label: "Start Date - Accending",
+      value: "ASC_SDate",
+    },
+    {
+      label: "Start Date - Decending",
+      value: "DESC_SDate",
+    },
+    {
+      label: "End Date - Accending",
+      value: "ASC_EDate",
+    },
+    {
+      label: "End Date - Decending",
+      value: "DESC_EDate",
     },
   ];
 
@@ -85,10 +118,13 @@ export default function Jobs() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
-    name: "",
-    permission: "ANY",
-    status: "All",
-    action: "descending",
+    jobId: "",
+    technician: "",
+    priority: "All",
+    startDate: "",
+    endDate: "",
+    finalStatus: "All",
+    action: "DESC_ID",
   });
 
   const [pagination, setPagination] = useState({
@@ -100,9 +136,7 @@ export default function Jobs() {
   const getData = async (page: number) => {
     setIsLoading(true);
 
-    const response = await get_paginatedJobs({}, page);
-
-    console.log(response);
+    const response = await get_paginatedJobs(filters, page);
 
     if (response) {
       setPagination({
@@ -115,8 +149,20 @@ export default function Jobs() {
     }
   };
 
-  const handle_filterTable = (filterObj: any) => {
-    console.log(filterObj);
+  const handle_filterTable = async (filterObj: any) => {
+    setIsLoading(true);
+
+    const response = await get_paginatedJobs(filterObj, pagination.currentPage);
+
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   //!---
@@ -179,12 +225,12 @@ export default function Jobs() {
                   <TableInput
                     type="text"
                     placeholder="Enter job ID"
-                    value={filters.name}
+                    value={filters.jobId}
                     onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
+                      setFilters({ ...filters, jobId: value })
                     }
                     onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
+                      handle_filterTable({ ...filters, jobId: value })
                     }
                   />
                 </div>
@@ -198,12 +244,12 @@ export default function Jobs() {
                   <TableInput
                     type="text"
                     placeholder="Enter technician ID"
-                    value={filters.name}
+                    value={filters.technician}
                     onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
+                      setFilters({ ...filters, technician: value })
                     }
                     onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
+                      handle_filterTable({ ...filters, technician: value })
                     }
                   />
                 </div>
@@ -215,13 +261,13 @@ export default function Jobs() {
                 <div className="table-head">
                   <p>Priority</p>
                   <TableDropdown
-                    value={filters.permission}
+                    value={filters.priority}
                     options={permissions}
                     onChange={(option: any) => {
-                      setFilters({ ...filters, permission: option.value });
+                      setFilters({ ...filters, priority: option.value });
                       handle_filterTable({
                         ...filters,
-                        permission: option.value,
+                        priority: option.value,
                       });
                     }}
                     loading={false}
@@ -233,17 +279,14 @@ export default function Jobs() {
                 className="table-head-background"
               >
                 <div className="table-head">
-                  <p>Start Date</p>
-                  <TableInput
-                    type="text"
+                  <p>Planned Start Date</p>
+                  <TableDatePicker
                     placeholder="Enter start date"
-                    value={filters.name}
-                    onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
-                    }
-                    onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
-                    }
+                    value={filters.startDate}
+                    onChange={(value: any) => {
+                      setFilters({ ...filters, startDate: value });
+                      handle_filterTable({ ...filters, startDate: value });
+                    }}
                   />
                 </div>
               </th>
@@ -252,17 +295,14 @@ export default function Jobs() {
                 className="table-head-background"
               >
                 <div className="table-head">
-                  <p>End Date</p>
-                  <TableInput
-                    type="text"
-                    placeholder="Enter end date"
-                    value={filters.name}
-                    onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
-                    }
-                    onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
-                    }
+                  <p>Planned End Date</p>
+                  <TableDatePicker
+                    placeholder="Enter start date"
+                    value={filters.endDate}
+                    onChange={(value: any) => {
+                      setFilters({ ...filters, endDate: value });
+                      handle_filterTable({ ...filters, endDate: value });
+                    }}
                   />
                 </div>
               </th>
@@ -273,11 +313,14 @@ export default function Jobs() {
                 <div className="table-head">
                   <p>Status</p>
                   <TableDropdown
-                    value={filters.status}
+                    value={filters.finalStatus}
                     options={statuses}
                     onChange={(option: any) => {
-                      setFilters({ ...filters, status: option.value });
-                      handle_filterTable({ ...filters, status: option.value });
+                      setFilters({ ...filters, finalStatus: option.value });
+                      handle_filterTable({
+                        ...filters,
+                        finalStatus: option.value,
+                      });
                     }}
                     loading={false}
                   />
