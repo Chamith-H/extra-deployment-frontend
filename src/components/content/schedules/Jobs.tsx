@@ -10,6 +10,7 @@ import { dateFetcher } from "../../../services/shared/timefetcher";
 import ViewJob from "./imports/ViewJob";
 import LongSideModal from "../../shared/common/LongSideModal";
 import TableDatePicker from "../../shared/inputs/TableDatePicker";
+import NoData from "../../shared/common/NoData";
 
 export default function Jobs() {
   const permissions = [
@@ -207,7 +208,7 @@ export default function Jobs() {
         actionName="NONE"
       />
 
-      <div className="mt-3 table-border-align p-4 bg-white">
+      <div className="mt-3 table-border-align p-4 bg-white normal-filt-table">
         <table className="w-100 custom-table">
           <thead>
             <tr>
@@ -359,6 +360,19 @@ export default function Jobs() {
             </tbody>
           )}
 
+          {!isLoading && data && data.length === 0 && (
+            <tbody>
+              <tr>
+                <td className="normal-style"></td>
+                <td className="loader-style" colSpan={7}>
+                  <div className="px-5 py-5">
+                    <NoData message="No Jobs Available!" />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          )}
+
           {!isLoading && data && data.length !== 0 && (
             <tbody>
               {data.map((item: any, i: number) => (
@@ -455,10 +469,12 @@ export default function Jobs() {
         </table>
       </div>
 
-      <Pagination
-        pagination={pagination}
-        changePage={(page: number) => getData(page)}
-      />
+      {pagination.pageCount > 1 && (
+        <Pagination
+          pagination={pagination}
+          changePage={(page: number) => getData(page)}
+        />
+      )}
 
       <LongSideModal
         visible={showView}

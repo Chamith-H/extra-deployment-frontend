@@ -125,3 +125,7 @@
 .f-item {
   font-family: "R3";
 }
+
+.normal-filt-table {
+  min-height: 500px;
+}
