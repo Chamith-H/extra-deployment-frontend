@@ -139,8 +139,6 @@ export default function Jobs() {
 
     const response = await get_paginatedJobs(filters, page);
 
-    console.log(response);
-
     if (response) {
       setPagination({
         currentPage: response.page,
@@ -243,7 +241,7 @@ export default function Jobs() {
                 className="table-head-background"
               >
                 <div className="table-head">
-                  <p>Technician ID</p>
+                  <p>Technician</p>
                   <TableInput
                     type="text"
                     placeholder="Enter technician ID"

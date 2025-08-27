@@ -10,20 +10,25 @@ import "../../../styles/content/financing/Expense.css";
 import SideModal from "../../shared/common/SideModal";
 import ExpenseView from "./imports/ExpenseView";
 import AppLoader from "../../shared/common/AppLoader";
+import TableDatePicker from "../../shared/inputs/TableDatePicker";
 
 export default function Expenses() {
   const permissions = [
     {
-      label: "Not-Filtered",
-      value: "ANY",
-    },
-    {
-      label: "All-Enabled",
+      label: "All",
       value: "ALL",
     },
     {
-      label: "All-Disabled",
-      value: "NONE",
+      label: "Jobs",
+      value: "Jobs",
+    },
+    {
+      label: "Journeys",
+      value: "Journeys",
+    },
+    {
+      label: "General",
+      value: "General",
     },
   ];
 
@@ -33,24 +38,106 @@ export default function Expenses() {
       value: "All",
     },
     {
-      label: "Active",
-      value: "true",
+      label: "Pending",
+      value: "Pending",
     },
     {
-      label: "Inactive",
-      value: "false",
+      label: "Approved",
+      value: "Approved",
+    },
+    {
+      label: "Rejected",
+      value: "Rejected",
     },
   ];
 
   const orders = [
     {
-      label: "Descending",
-      value: "descending",
+      label: "Letest to top",
+      value: "DESC_ID",
     },
     {
-      label: "Ascending",
-      value: "Ascending",
+      label: "Oldest to top",
+      value: "ASC_ID",
     },
+    {
+      label: "Expense ID - (A to Z)",
+      value: "ASC_ExpenseID",
+    },
+    {
+      label: "Expense ID - (Z to A)",
+      value: "DESC_ExpenseID",
+    },
+    {
+      label: "Amount - Accending",
+      value: "ASC_Amount",
+    },
+    {
+      label: "Amount - Decending",
+      value: "DESC_Amount",
+    },
+    {
+      label: "Created Date - Accending",
+      value: "ASC_CDate",
+    },
+    {
+      label: "Created Date - Decending",
+      value: "DESC_CDate",
+    },
+  ];
+
+  const eTypes = [
+    { label: "All", value: "All" },
+    { label: "Fuel", value: "Fuel" },
+    { label: "Meals", value: "Meals" },
+    { label: "Accommodation", value: "Accommodation" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Airfare", value: "Airfare" },
+    { label: "Train Fare", value: "Train Fare" },
+    { label: "Bus Fare", value: "Bus Fare" },
+    { label: "Taxi Fare", value: "Taxi Fare" },
+    { label: "Tolls", value: "Tolls" },
+    { label: "Parking", value: "Parking" },
+    { label: "Car Rental", value: "Car Rental" },
+    { label: "Mileage Reimbursement", value: "Mileage Reimbursement" },
+    { label: "Office Supplies", value: "Office Supplies" },
+    { label: "Internet", value: "Internet" },
+    { label: "Mobile Bill", value: "Mobile Bill" },
+    { label: "Courier Charges", value: "Courier Charges" },
+    { label: "Postage", value: "Postage" },
+    { label: "Printing", value: "Printing" },
+    { label: "Stationery", value: "Stationery" },
+    { label: "Client Entertainment", value: "Client Entertainment" },
+    { label: "Gifts", value: "Gifts" },
+    { label: "Event Fees", value: "Event Fees" },
+    { label: "Training", value: "Training" },
+    { label: "Conference Fees", value: "Conference Fees" },
+    { label: "Seminar Fees", value: "Seminar Fees" },
+    { label: "Software Subscription", value: "Software Subscription" },
+    { label: "Hardware Purchase", value: "Hardware Purchase" },
+    { label: "Utilities", value: "Utilities" },
+    { label: "Cleaning Services", value: "Cleaning Services" },
+    { label: "Maintenance", value: "Maintenance" },
+    { label: "Repairs", value: "Repairs" },
+    { label: "Legal Fees", value: "Legal Fees" },
+    { label: "Consulting Fees", value: "Consulting Fees" },
+    { label: "Advertising", value: "Advertising" },
+    { label: "Marketing", value: "Marketing" },
+    { label: "Travel Insurance", value: "Travel Insurance" },
+    { label: "Health Insurance", value: "Health Insurance" },
+    { label: "Bank Charges", value: "Bank Charges" },
+    { label: "Loan Interest", value: "Loan Interest" },
+    { label: "Depreciation", value: "Depreciation" },
+    { label: "Recruitment", value: "Recruitment" },
+    { label: "Employee Bonus", value: "Employee Bonus" },
+    { label: "Petty Cash", value: "Petty Cash" },
+    { label: "Medical Expenses", value: "Medical Expenses" },
+    { label: "Uniforms", value: "Uniforms" },
+    { label: "Security", value: "Security" },
+    { label: "Subscription Fees", value: "Subscription Fees" },
+    { label: "IT Support", value: "IT Support" },
+    { label: "Business Development", value: "Business Development" },
+    { label: "Miscellaneous", value: "Miscellaneous" },
   ];
 
   const [isLoading, setIsLoading] = useState(false);
@@ -61,10 +148,15 @@ export default function Expenses() {
   const [showView, setShowView] = useState(false);
 
   const [filters, setFilters] = useState({
-    name: "",
-    permission: "ANY",
+    expenseID: "",
+    category: "All",
+    referanceID: "",
+    type: "All",
+    amount: "",
+    technician: "",
+    createdDate: "",
     status: "All",
-    action: "descending",
+    actions: "DESC_ID",
   });
 
   const [pagination, setPagination] = useState({
@@ -75,7 +167,7 @@ export default function Expenses() {
 
   const getData = async (page: number) => {
     setIsLoading(true);
-    const response = await get_paginatedExpenses({}, page);
+    const response = await get_paginatedExpenses(filters, page);
 
     setPagination({
       currentPage: response.page,
@@ -106,8 +198,40 @@ export default function Expenses() {
     setIsLoading(false);
   };
 
-  const handle_filterTable = (filterObj: any) => {
-    console.log(filterObj);
+  const handle_filterTable = async (filterObj: any) => {
+    setIsLoading(true);
+    const response = await get_paginatedExpenses(
+      filterObj,
+      pagination.currentPage
+    );
+
+    setPagination({
+      currentPage: response.page,
+      pageCount: response.pageCount,
+      dataCount: response.totalCount,
+    });
+
+    const responseDataMapper = response.data.map((r_data: any) => {
+      if (!r_data.Status) {
+        r_data.Status = "Pending";
+      }
+
+      if (r_data.JobID !== "") {
+        r_data.Category = "Jobs";
+        r_data.RefID = r_data.JobID;
+      } else if (r_data.JourneyID !== "") {
+        r_data.Category = "Journeys";
+        r_data.RefID = r_data.JourneyID;
+      } else if (r_data.JobID === "" && r_data.JourneyID === "") {
+        r_data.Category = "General";
+        r_data.RefID = "___";
+      }
+
+      return r_data;
+    });
+
+    setData(responseDataMapper);
+    setIsLoading(false);
   };
 
   const viewData = (expenseID: string, status: string, allData: any) => {
@@ -188,12 +312,12 @@ export default function Expenses() {
                     <TableInput
                       type="text"
                       placeholder="Enter role name"
-                      value={filters.name}
+                      value={filters.expenseID}
                       onChange={(value: any) =>
-                        setFilters({ ...filters, name: value })
+                        setFilters({ ...filters, expenseID: value })
                       }
                       onSearch={(value: any) =>
-                        handle_filterTable({ ...filters, name: value })
+                        handle_filterTable({ ...filters, expenseID: value })
                       }
                     />
                   </div>
@@ -205,13 +329,13 @@ export default function Expenses() {
                   <div className="table-head">
                     <p>Category</p>
                     <TableDropdown
-                      value={filters.permission}
+                      value={filters.category}
                       options={permissions}
                       onChange={(option: any) => {
-                        setFilters({ ...filters, permission: option.value });
+                        setFilters({ ...filters, category: option.value });
                         handle_filterTable({
                           ...filters,
-                          permission: option.value,
+                          category: option.value,
                         });
                       }}
                       loading={false}
@@ -227,12 +351,12 @@ export default function Expenses() {
                     <TableInput
                       type="text"
                       placeholder="Enter role name"
-                      value={filters.name}
+                      value={filters.referanceID}
                       onChange={(value: any) =>
-                        setFilters({ ...filters, name: value })
+                        setFilters({ ...filters, referanceID: value })
                       }
                       onSearch={(value: any) =>
-                        handle_filterTable({ ...filters, name: value })
+                        handle_filterTable({ ...filters, referanceID: value })
                       }
                     />
                   </div>
@@ -244,13 +368,13 @@ export default function Expenses() {
                   <div className="table-head">
                     <p>Type</p>
                     <TableDropdown
-                      value={filters.status}
-                      options={statuses}
+                      value={filters.type}
+                      options={eTypes}
                       onChange={(option: any) => {
-                        setFilters({ ...filters, status: option.value });
+                        setFilters({ ...filters, type: option.value });
                         handle_filterTable({
                           ...filters,
-                          status: option.value,
+                          type: option.value,
                         });
                       }}
                       loading={false}
@@ -266,12 +390,12 @@ export default function Expenses() {
                     <TableInput
                       type="text"
                       placeholder="Enter role name"
-                      value={filters.name}
+                      value={filters.amount}
                       onChange={(value: any) =>
-                        setFilters({ ...filters, name: value })
+                        setFilters({ ...filters, amount: value })
                       }
                       onSearch={(value: any) =>
-                        handle_filterTable({ ...filters, name: value })
+                        handle_filterTable({ ...filters, amount: value })
                       }
                     />
                   </div>
@@ -281,16 +405,16 @@ export default function Expenses() {
                   className="table-head-background"
                 >
                   <div className="table-head">
-                    <p>Requester ID</p>
+                    <p>Technician</p>
                     <TableInput
                       type="text"
                       placeholder="Enter role name"
-                      value={filters.name}
+                      value={filters.technician}
                       onChange={(value: any) =>
-                        setFilters({ ...filters, name: value })
+                        setFilters({ ...filters, technician: value })
                       }
                       onSearch={(value: any) =>
-                        handle_filterTable({ ...filters, name: value })
+                        handle_filterTable({ ...filters, technician: value })
                       }
                     />
                   </div>
@@ -301,16 +425,13 @@ export default function Expenses() {
                 >
                   <div className="table-head">
                     <p>Created Date</p>
-                    <TableInput
-                      type="text"
-                      placeholder="Enter role name"
-                      value={filters.name}
-                      onChange={(value: any) =>
-                        setFilters({ ...filters, name: value })
-                      }
-                      onSearch={(value: any) =>
-                        handle_filterTable({ ...filters, name: value })
-                      }
+                    <TableDatePicker
+                      placeholder="Enter start date"
+                      value={filters.createdDate}
+                      onChange={(value: any) => {
+                        setFilters({ ...filters, createdDate: value });
+                        handle_filterTable({ ...filters, createdDate: value });
+                      }}
                     />
                   </div>
                 </th>
@@ -342,13 +463,13 @@ export default function Expenses() {
                   <div className="table-head">
                     <p>Actions</p>
                     <TableDropdown
-                      value={filters.action}
+                      value={filters.actions}
                       options={orders}
                       onChange={(option: any) => {
-                        setFilters({ ...filters, action: option.value });
+                        setFilters({ ...filters, actions: option.value });
                         handle_filterTable({
                           ...filters,
-                          action: option.value,
+                          actions: option.value,
                         });
                       }}
                       loading={false}
@@ -370,7 +491,7 @@ export default function Expenses() {
                     <td className="normal-style">{item.RefID}</td>
                     <td className="normal-style">{item.Type}</td>
                     <td className="normal-style">{item.Amount}</td>
-                    <td className="normal-style">{item.CreatedBy}</td>
+                    <td className="normal-style">{item.createdByName}</td>
                     <td className="normal-style">
                       {dateFetcher(item.CreatedDate)}
                     </td>

@@ -9,12 +9,13 @@ import { get_paginatedJourneys } from "../../../services/controllers/job.control
 import { dateFetcher } from "../../../services/shared/timefetcher";
 import LongSideModal from "../../shared/common/LongSideModal";
 import ViewJourney from "./imports/ViewJourney";
+import TableDatePicker from "../../shared/inputs/TableDatePicker";
 
 export default function Journeys() {
   const permissions = [
     {
       label: "All",
-      value: "ANY",
+      value: "All",
     },
     {
       label: "Private",
@@ -47,12 +48,36 @@ export default function Journeys() {
 
   const orders = [
     {
-      label: "Descending",
-      value: "descending",
+      label: "Letest to top",
+      value: "DESC_ID",
     },
     {
-      label: "Ascending",
-      value: "Ascending",
+      label: "Oldest to top",
+      value: "ASC_ID",
+    },
+    {
+      label: "Journey ID - (A to Z)",
+      value: "ASC_JourneyID",
+    },
+    {
+      label: "Journey ID - (Z to A)",
+      value: "DESC_JourneyID",
+    },
+    {
+      label: "Start Date - Accending",
+      value: "ASC_SDate",
+    },
+    {
+      label: "Start Date - Decending",
+      value: "DESC_SDate",
+    },
+    {
+      label: "End Date - Accending",
+      value: "ASC_EDate",
+    },
+    {
+      label: "End Date - Decending",
+      value: "DESC_EDate",
     },
   ];
 
@@ -61,10 +86,14 @@ export default function Journeys() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
-    name: "",
-    permission: "ANY",
+    journeyID: "",
+    technician: "",
+    vehicleType: "All",
+    vahicleNumber: "",
+    startDate: "",
+    endDate: "",
     status: "All",
-    action: "descending",
+    action: "",
   });
 
   const [pagination, setPagination] = useState({
@@ -76,9 +105,7 @@ export default function Journeys() {
   const getData = async (page: number) => {
     setIsLoading(true);
 
-    const response = await get_paginatedJourneys({}, page);
-
-    console.log(response);
+    const response = await get_paginatedJourneys(filters, page);
 
     if (response) {
       setPagination({
@@ -91,8 +118,23 @@ export default function Journeys() {
     }
   };
 
-  const handle_filterTable = (filterObj: any) => {
-    console.log(filterObj);
+  const handle_filterTable = async (filterObj: any) => {
+    setIsLoading(true);
+
+    const response = await get_paginatedJourneys(
+      filterObj,
+      pagination.currentPage
+    );
+
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   //!---
@@ -155,12 +197,12 @@ export default function Journeys() {
                   <TableInput
                     type="text"
                     placeholder="Enter journey ID"
-                    value={filters.name}
+                    value={filters.journeyID}
                     onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
+                      setFilters({ ...filters, journeyID: value })
                     }
                     onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
+                      handle_filterTable({ ...filters, journeyID: value })
                     }
                   />
                 </div>
@@ -170,16 +212,16 @@ export default function Journeys() {
                 className="table-head-background"
               >
                 <div className="table-head">
-                  <p>Technician ID</p>
+                  <p>Technician</p>
                   <TableInput
                     type="text"
                     placeholder="Enter technician ID"
-                    value={filters.name}
+                    value={filters.technician}
                     onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
+                      setFilters({ ...filters, technician: value })
                     }
                     onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
+                      handle_filterTable({ ...filters, technician: value })
                     }
                   />
                 </div>
@@ -191,13 +233,13 @@ export default function Journeys() {
                 <div className="table-head">
                   <p>Vehicle Type</p>
                   <TableDropdown
-                    value={filters.permission}
+                    value={filters.vehicleType}
                     options={permissions}
                     onChange={(option: any) => {
-                      setFilters({ ...filters, permission: option.value });
+                      setFilters({ ...filters, vehicleType: option.value });
                       handle_filterTable({
                         ...filters,
-                        permission: option.value,
+                        vehicleType: option.value,
                       });
                     }}
                     loading={false}
@@ -213,12 +255,12 @@ export default function Journeys() {
                   <TableInput
                     type="text"
                     placeholder="Enter vehicle number"
-                    value={filters.name}
+                    value={filters.vahicleNumber}
                     onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
+                      setFilters({ ...filters, vahicleNumber: value })
                     }
                     onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
+                      handle_filterTable({ ...filters, vahicleNumber: value })
                     }
                   />
                 </div>
@@ -229,16 +271,13 @@ export default function Journeys() {
               >
                 <div className="table-head">
                   <p>Start Date</p>
-                  <TableInput
-                    type="text"
+                  <TableDatePicker
                     placeholder="Enter start date"
-                    value={filters.name}
-                    onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
-                    }
-                    onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
-                    }
+                    value={filters.startDate}
+                    onChange={(value: any) => {
+                      setFilters({ ...filters, startDate: value });
+                      handle_filterTable({ ...filters, startDate: value });
+                    }}
                   />
                 </div>
               </th>
@@ -248,16 +287,13 @@ export default function Journeys() {
               >
                 <div className="table-head">
                   <p>End Date</p>
-                  <TableInput
-                    type="text"
-                    placeholder="Enter end date"
-                    value={filters.name}
-                    onChange={(value: any) =>
-                      setFilters({ ...filters, name: value })
-                    }
-                    onSearch={(value: any) =>
-                      handle_filterTable({ ...filters, name: value })
-                    }
+                  <TableDatePicker
+                    placeholder="Enter start date"
+                    value={filters.endDate}
+                    onChange={(value: any) => {
+                      setFilters({ ...filters, endDate: value });
+                      handle_filterTable({ ...filters, endDate: value });
+                    }}
                   />
                 </div>
               </th>
@@ -319,7 +355,7 @@ export default function Journeys() {
                     {i + (pagination.currentPage - 1) * 10 + 1}
                   </td>
                   <td className="normal-style f-item">{item.JourneyID}</td>
-                  <td className="normal-style">{item.Technician}</td>
+                  <td className="normal-style">{item.technicianName}</td>
                   <td className="normal-style">{item.VehicleType}</td>
                   <td className="normal-style">{item.StartVehicleNumber}</td>
 
