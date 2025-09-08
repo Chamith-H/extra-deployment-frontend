@@ -9,20 +9,21 @@ import ConfirmationModal from "../../shared/common/ConfirmationModal";
 import UserForm from "./imports/UserForm";
 import { get_paginatedUsers } from "../../../services/controllers/user.controller";
 import AppLoader from "../../shared/common/AppLoader";
+import { get_roleDropdown } from "../../../services/controllers/role.controller";
 
 export default function Users() {
-  const permissions = [
+  const genders = [
     {
-      label: "Not-Filtered",
-      value: "ANY",
+      label: "All",
+      value: "All",
     },
     {
-      label: "All-Enabled",
-      value: "ALL",
+      label: "Male",
+      value: "Male",
     },
     {
-      label: "All-Disabled",
-      value: "NONE",
+      label: "Female",
+      value: "Female",
     },
   ];
 
@@ -43,14 +44,24 @@ export default function Users() {
 
   const orders = [
     {
-      label: "Descending",
-      value: "descending",
+      label: "latest to top",
+      value: "DESC_ID",
     },
     {
-      label: "Ascending",
-      value: "Ascending",
+      label: "Oldest to top",
+      value: "ASC_ID",
+    },
+    {
+      label: "User name - (A to Z)",
+      value: "ASC_UserName",
+    },
+    {
+      label: "User name - (Z to A)",
+      value: "DESC_UserName",
     },
   ];
+
+  const [roles, setRoles] = useState<any[]>([]);
 
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -61,9 +72,11 @@ export default function Users() {
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     name: "",
-    permission: "ANY",
+    employId: "",
+    role: "All",
+    gender: "All",
     status: "All",
-    action: "descending",
+    action: "DESC_ID",
   });
 
   const [pagination, setPagination] = useState({
@@ -75,7 +88,7 @@ export default function Users() {
   const getData = async (page: number) => {
     setIsLoading(true);
 
-    const response = await get_paginatedUsers({}, page);
+    const response = await get_paginatedUsers(filters, page);
 
     if (response) {
       setPagination({
@@ -89,8 +102,23 @@ export default function Users() {
     }
   };
 
-  const handle_filterTable = (filterObj: any) => {
-    console.log(filterObj);
+  const handle_filterTable = async (filterObj: any) => {
+    setIsLoading(true);
+
+    const response = await get_paginatedUsers(
+      filterObj,
+      pagination.currentPage
+    );
+
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   //!---
@@ -116,7 +144,20 @@ export default function Users() {
     getData(pagination.currentPage);
   };
 
+  const [loadingRoles, setLoadingRoles] = useState(false);
+
+  const getRoles = async () => {
+    setLoadingRoles(true);
+    const userRoles = await get_roleDropdown();
+
+    const roleAll = [{ label: "All", value: "All" }, ...userRoles];
+
+    setRoles(roleAll);
+    setLoadingRoles(false);
+  };
+
   useEffect(() => {
+    getRoles();
     getData(1);
   }, []);
 
@@ -170,7 +211,7 @@ export default function Users() {
                   <p>Full Name</p>
                   <TableInput
                     type="text"
-                    placeholder="Enter role name"
+                    placeholder="Enter user name"
                     value={filters.name}
                     onChange={(value: any) =>
                       setFilters({ ...filters, name: value })
@@ -187,17 +228,16 @@ export default function Users() {
               >
                 <div className="table-head">
                   <p>Reference ID</p>
-                  <TableDropdown
-                    value={filters.permission}
-                    options={permissions}
-                    onChange={(option: any) => {
-                      setFilters({ ...filters, permission: option.value });
-                      handle_filterTable({
-                        ...filters,
-                        permission: option.value,
-                      });
-                    }}
-                    loading={false}
+                  <TableInput
+                    type="text"
+                    placeholder="Enter reference ID"
+                    value={filters.employId}
+                    onChange={(value: any) =>
+                      setFilters({ ...filters, employId: value })
+                    }
+                    onSearch={(value: any) =>
+                      handle_filterTable({ ...filters, employId: value })
+                    }
                   />
                 </div>
               </th>
@@ -208,13 +248,13 @@ export default function Users() {
                 <div className="table-head">
                   <p>Role</p>
                   <TableDropdown
-                    value={filters.status}
-                    options={statuses}
+                    value={filters.role}
+                    options={roles}
                     onChange={(option: any) => {
-                      setFilters({ ...filters, status: option.value });
-                      handle_filterTable({ ...filters, status: option.value });
+                      setFilters({ ...filters, role: option.value });
+                      handle_filterTable({ ...filters, role: option.value });
                     }}
-                    loading={false}
+                    loading={loadingRoles}
                   />
                 </div>
               </th>
@@ -225,11 +265,11 @@ export default function Users() {
                 <div className="table-head">
                   <p>Gender</p>
                   <TableDropdown
-                    value={filters.status}
-                    options={statuses}
+                    value={filters.gender}
+                    options={genders}
                     onChange={(option: any) => {
-                      setFilters({ ...filters, status: option.value });
-                      handle_filterTable({ ...filters, status: option.value });
+                      setFilters({ ...filters, gender: option.value });
+                      handle_filterTable({ ...filters, gender: option.value });
                     }}
                     loading={false}
                   />

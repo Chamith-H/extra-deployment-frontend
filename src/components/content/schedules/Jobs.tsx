@@ -73,7 +73,7 @@ export default function Jobs() {
 
   const orders = [
     {
-      label: "Letest to top",
+      label: "latest to top",
       value: "DESC_ID",
     },
     {

@@ -299,3 +299,13 @@
   width: 100%;
   overflow-x: auto;
 }
+
+.Job_id-class {
+  font-family: "R2";
+  font-size: 14px;
+  color: #000000;
+}
+
+.Job_id-class span {
+  color: #6b6b6b;
+}

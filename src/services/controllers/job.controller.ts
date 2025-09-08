@@ -21,3 +21,7 @@ export async function get_journeyDocuments(id: string) {
 export async function get_paginatedJourneys(data: any, page: number) {
   return await PAGINATE(controller, "all-journeys", data, page);
 }
+
+export async function get_journeyActions(id: string) {
+  return await POST(controller, `job-journeys`, { journeyId: id });
+}

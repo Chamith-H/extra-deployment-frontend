@@ -53,7 +53,7 @@ export default function Expenses() {
 
   const orders = [
     {
-      label: "Letest to top",
+      label: "latest to top",
       value: "DESC_ID",
     },
     {
@@ -491,7 +491,7 @@ export default function Expenses() {
                     <td className="normal-style">{item.RefID}</td>
                     <td className="normal-style">{item.Type}</td>
                     <td className="normal-style">{item.Amount}</td>
-                    <td className="normal-style">{item.createdByName}</td>
+                    <td className="normal-style">{item.technicianName}</td>
                     <td className="normal-style">
                       {dateFetcher(item.CreatedDate)}
                     </td>

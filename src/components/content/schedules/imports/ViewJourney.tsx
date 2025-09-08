@@ -9,6 +9,7 @@ import MapViewer from "../../../shared/viewers/MapViewer";
 import {
   get_jobAction,
   get_jobDocuments,
+  get_journeyActions,
   get_journeyDocuments,
 } from "../../../../services/controllers/job.controller";
 import { selectedExpenses } from "../../../../services/controllers/expense.controller";
@@ -20,8 +21,8 @@ export default function ViewJourney(props: any) {
   const [loadingTechnician, setLoadingTechnician] = useState(false);
   const [technicianData, setTechnicianData] = useState<any>(null);
 
-  const [loadingJobActions, setLoadingJobActions] = useState(false);
-  const [jobActions, setJobActions] = useState<any[]>([]);
+  const [loadingJourneyActions, setLoadingJourneyActions] = useState(false);
+  const [journeyActions, setJourneyActions] = useState<any[]>([]);
 
   const [loadingExpenses, setLoadingExpenses] = useState(false);
   const [expenseData, setExpenseData] = useState<any[]>([]);
@@ -99,10 +100,31 @@ export default function ViewJourney(props: any) {
     setLoadingExpenses(false);
   };
 
+  const getJourneyActions = async () => {
+    setLoadingJourneyActions(true);
+
+    const jobJourneys = await get_journeyActions(props.dataObj.JourneyID);
+
+    const actionGroup = Object.values(
+      jobJourneys.reduce((acc: any, { JobID, Status, AssignedDate }: any) => {
+        if (!acc[JobID]) {
+          acc[JobID] = { JobID, actions: [] };
+        }
+        acc[JobID].actions.push({ Status, AssignedDate });
+        return acc;
+      }, {})
+    );
+
+    setJourneyActions(actionGroup);
+
+    setLoadingJourneyActions(false);
+  };
+
   useEffect(() => {
     getTechnicianData();
     getJourneyDocuments();
     getExpenses();
+    getJourneyActions();
   }, []);
 
   const viewData = (expenseID: string, status: string, allData: any) => {
@@ -149,6 +171,8 @@ export default function ViewJourney(props: any) {
             <Tab>Documents</Tab>
 
             <Tab>Expenses</Tab>
+
+            <Tab>Timeline</Tab>
           </TabList>
 
           {/* Tab Content */}
@@ -493,6 +517,101 @@ export default function ViewJourney(props: any) {
                   <NoData message="No expenses available" />
                 </div>
               )}
+            </div>
+          </TabPanel>
+
+          <TabPanel>
+            <div className="tab-main-body">
+              {loadingJourneyActions && (
+                <div>
+                  <ContentLoader />
+                </div>
+              )}
+
+              {!loadingJourneyActions &&
+                journeyActions &&
+                journeyActions.length !== 0 && (
+                  <div className="mt-4">
+                    {journeyActions.map((jAction: any, j: number) => (
+                      <div key={j} className="mb-5">
+                        <h6 className="mb-0 Job_id-class">
+                          Job ID : <span>{jAction.JobID}</span>
+                        </h6>
+
+                        <div className="d-flex main-act-box px-3 pt-3 pb-2 tab-sub-box mt-2">
+                          {jAction.actions.map((j_action: any, i: number) => (
+                            <div key={i} className="d-flex">
+                              {i !== 0 && (
+                                <i className="bi bi-arrow-right fs-3 going-up-arrow mx-3"></i>
+                              )}
+
+                              <div className="job-action-box-x">
+                                <div className=" action-box-view">
+                                  <div>
+                                    <h5 className="mb-0">
+                                      {dateFetcher(j_action.AssignedDate)}
+                                    </h5>
+                                  </div>
+
+                                  <h6 className="action-status mb-0">
+                                    {j_action.Status === "Checked-In" && (
+                                      <span className="Chackin-Class">
+                                        Checked-In
+                                      </span>
+                                    )}
+
+                                    {j_action.Status === "Started" && (
+                                      <span className="Start-Class">
+                                        Started
+                                      </span>
+                                    )}
+
+                                    {j_action.Status === "Hold" && (
+                                      <span className="Hold-Class">Hold</span>
+                                    )}
+
+                                    {j_action.Status === "Resumed" && (
+                                      <span className="Resume-Class">
+                                        Resumed
+                                      </span>
+                                    )}
+
+                                    {j_action.Status === "Completed" && (
+                                      <span className="Complete-Class">
+                                        Completed
+                                      </span>
+                                    )}
+
+                                    {j_action.Status === "Checkout" && (
+                                      <span className="Checkout-Class">
+                                        Checked-Out
+                                      </span>
+                                    )}
+
+                                    {j_action.Status ===
+                                      "Completed and Checkout" && (
+                                      <span className="Checkout-Class">
+                                        Completed & Checked-Out
+                                      </span>
+                                    )}
+                                  </h6>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              {!loadingJourneyActions &&
+                journeyActions &&
+                journeyActions.length === 0 && (
+                  <div className="mt-4">
+                    <NoData message="No data available" />
+                  </div>
+                )}
             </div>
           </TabPanel>
         </Tabs>

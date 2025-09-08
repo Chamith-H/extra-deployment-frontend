@@ -14,21 +14,6 @@ import ConfirmationModal from "../../shared/common/ConfirmationModal";
 import AppLoader from "../../shared/common/AppLoader";
 
 export default function Role() {
-  const permissions = [
-    {
-      label: "Not-Filtered",
-      value: "ANY",
-    },
-    {
-      label: "All-Enabled",
-      value: "ALL",
-    },
-    {
-      label: "All-Disabled",
-      value: "NONE",
-    },
-  ];
-
   const statuses = [
     {
       label: "All",
@@ -46,12 +31,20 @@ export default function Role() {
 
   const orders = [
     {
-      label: "Descending",
-      value: "descending",
+      label: "latest to top",
+      value: "DESC_ID",
     },
     {
-      label: "Ascending",
-      value: "Ascending",
+      label: "Oldest to top",
+      value: "ASC_ID",
+    },
+    {
+      label: "Role name - (A to Z)",
+      value: "ASC_RoleName",
+    },
+    {
+      label: "Role name - (Z to A)",
+      value: "DESC_RoleName",
     },
   ];
 
@@ -64,9 +57,8 @@ export default function Role() {
   const [data, setData] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     name: "",
-    permission: "ANY",
     status: "All",
-    action: "descending",
+    action: "DESC_ID",
   });
 
   const [pagination, setPagination] = useState({
@@ -78,7 +70,7 @@ export default function Role() {
   const getData = async (page: number) => {
     setIsLoading(true);
 
-    const response = await get_paginatedRoles({}, page);
+    const response = await get_paginatedRoles(filters, page);
 
     if (response) {
       setPagination({
@@ -91,8 +83,23 @@ export default function Role() {
     }
   };
 
-  const handle_filterTable = (filterObj: any) => {
-    console.log(filterObj);
+  const handle_filterTable = async (filterObj: any) => {
+    setIsLoading(true);
+
+    const response = await get_paginatedRoles(
+      filterObj,
+      pagination.currentPage
+    );
+
+    if (response) {
+      setPagination({
+        currentPage: response.page,
+        pageCount: response.pageCount,
+        dataCount: response.totalCount,
+      });
+      setData(response.data);
+      setIsLoading(false);
+    }
   };
 
   //!---
@@ -195,26 +202,7 @@ export default function Role() {
                   />
                 </div>
               </th>
-              <th
-                style={{ width: dynamicWidth }}
-                className="table-head-background"
-              >
-                <div className="table-head">
-                  <p>Permission Count</p>
-                  <TableDropdown
-                    value={filters.permission}
-                    options={permissions}
-                    onChange={(option: any) => {
-                      setFilters({ ...filters, permission: option.value });
-                      handle_filterTable({
-                        ...filters,
-                        permission: option.value,
-                      });
-                    }}
-                    loading={false}
-                  />
-                </div>
-              </th>
+
               <th
                 style={{ width: dynamicWidth }}
                 className="table-head-background"
@@ -273,7 +261,6 @@ export default function Role() {
                     {i + (pagination.currentPage - 1) * 10 + 1}
                   </td>
                   <td className="normal-style f-item">{item.name}</td>
-                  <td className="normal-style">{item.accesses.length}</td>
                   <td className="bold-style">
                     {item.status && (
                       <span className="Active-Status">Active</span>

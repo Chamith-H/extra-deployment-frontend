@@ -48,7 +48,7 @@ export default function Journeys() {
 
   const orders = [
     {
-      label: "Letest to top",
+      label: "latest to top",
       value: "DESC_ID",
     },
     {
@@ -113,6 +113,8 @@ export default function Journeys() {
         pageCount: response.pageCount,
         dataCount: response.totalCount,
       });
+
+      console.log(response.data);
       setData(response.data);
       setIsLoading(false);
     }
@@ -132,6 +134,7 @@ export default function Journeys() {
         pageCount: response.pageCount,
         dataCount: response.totalCount,
       });
+
       setData(response.data);
       setIsLoading(false);
     }
