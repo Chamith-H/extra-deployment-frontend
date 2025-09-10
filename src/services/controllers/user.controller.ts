@@ -32,3 +32,7 @@ export async function get_userDrop() {
     ...responseMapper,
   ];
 }
+
+export async function clear_loginDevice(id: string) {
+  return await GET(controller, `clear-id/${id}`);
+}

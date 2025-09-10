@@ -10,6 +10,7 @@ import UserForm from "./imports/UserForm";
 import { get_paginatedUsers } from "../../../services/controllers/user.controller";
 import AppLoader from "../../shared/common/AppLoader";
 import { get_roleDropdown } from "../../../services/controllers/role.controller";
+import UserView from "./imports/UserView";
 
 export default function Users() {
   const genders = [
@@ -128,6 +129,11 @@ export default function Users() {
   const clickEdit = (data: any) => {
     setSelectedData(data);
     setShowEdit(true);
+  };
+
+  const clickView = (data: any) => {
+    setSelectedData(data);
+    setShowView(true);
   };
 
   //!--
@@ -345,7 +351,10 @@ export default function Users() {
                     )}
                   </td>
                   <td className="normal-style">
-                    <button className="view-button">
+                    <button
+                      className="view-button"
+                      onClick={() => clickView(item)}
+                    >
                       <i className="bi bi-file-earmark-richtext"></i>
                     </button>
 
@@ -397,6 +406,14 @@ export default function Users() {
             sync={(response: any) => sync_afterAction(response)}
           />
         }
+      />
+
+      <SideModal
+        visible={showView}
+        title="VIEW USER"
+        image="user.png"
+        closeModal={() => setShowView(false)}
+        content={<UserView data={selectedData} />}
       />
 
       <ConfirmationModal

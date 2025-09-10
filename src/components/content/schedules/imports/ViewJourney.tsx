@@ -104,6 +104,7 @@ export default function ViewJourney(props: any) {
     setLoadingJourneyActions(true);
 
     const jobJourneys = await get_journeyActions(props.dataObj.JourneyID);
+    console.log(jobJourneys);
 
     const actionGroup = Object.values(
       jobJourneys.reduce((acc: any, { JobID, Status, AssignedDate }: any) => {

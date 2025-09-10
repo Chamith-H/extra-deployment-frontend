@@ -180,29 +180,45 @@ export default function Dashboard() {
 
       const fetchedLocations = response.openJobs.map((o_job: any) => {
         if (o_job.AcknowledgementLat !== "") {
-          const location = {
-            lat: Number(o_job.AcknowledgementLat),
-            lng: Number(o_job.AcknowledgementLong),
-            color: "#00bb00",
-            name: o_job.JobID,
-            target: "Ack",
-            user: `${o_job.Technician}`,
-          };
+          if (
+            o_job.AcknowledgementLat &&
+            o_job.AcknowledgementLat !== "" &&
+            o_job.AcknowledgementLong &&
+            o_job.AcknowledgementLong !== ""
+          ) {
+            const location = {
+              lat: Number(o_job.AcknowledgementLat),
+              lng: Number(o_job.AcknowledgementLong),
+              color: "#00bb00",
+              name: o_job.JobID,
+              target: "Ack",
+              user: `${o_job.Technician}`,
+            };
 
-          f_locations.push(location);
+            f_locations.push(location);
+          }
         }
 
         if (o_job.CheckedInLat !== "") {
-          const location = {
-            lat: Number(o_job.CheckedInLat),
-            lng: Number(o_job.CheckedInLong),
-            color: "orange",
-            name: o_job.JobID,
-            target: "Chk",
-            user: `${o_job.Technician}`,
-          };
+          if (
+            o_job.CheckedInLat &&
+            o_job.CheckedInLat !== "" &&
+            o_job.CheckedInLong &&
+            o_job.CheckedInLong !== ""
+          ) {
+            const location = {
+              lat: Number(o_job.CheckedInLat),
+              lng: Number(o_job.CheckedInLong),
+              color: "orange",
+              name: o_job.JobID,
+              target: "Chk",
+              user: `${o_job.Technician}`,
+            };
 
-          f_locations.push(location);
+            console.log(o_job, "Locs");
+
+            f_locations.push(location);
+          }
         }
 
         return o_job;
@@ -431,8 +447,8 @@ export default function Dashboard() {
                     {fetchLocations().map((loc, index) => (
                       <MarkerComponent
                         key={index}
-                        lat={loc.lat}
-                        lng={loc.lng}
+                        lat={loc?.lat}
+                        lng={loc?.lng}
                         text={loc.name}
                         color={loc.color}
                       />
