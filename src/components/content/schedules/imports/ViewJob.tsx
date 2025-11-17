@@ -9,12 +9,15 @@ import MapViewer from "../../../shared/viewers/MapViewer";
 import {
   get_jobAction,
   get_jobDocuments,
+  get_spareParts,
 } from "../../../../services/controllers/job.controller";
 import { selectedExpenses } from "../../../../services/controllers/expense.controller";
 import NoData from "../../../shared/common/NoData";
 import SideModal from "../../../shared/common/SideModal";
 import ExpenseView from "../../financing/imports/ExpenseView";
 import InsideSideModal from "../../../shared/common/InsideSideModel";
+import { spread } from "axios";
+import { tr } from "date-fns/locale";
 
 export default function ViewJob(props: any) {
   const [loadingTechnician, setLoadingTechnician] = useState(false);
@@ -22,6 +25,9 @@ export default function ViewJob(props: any) {
 
   const [loadingJobActions, setLoadingJobActions] = useState(false);
   const [jobActions, setJobActions] = useState<any[]>([]);
+
+  const [loadingSpareParts, setLoadingSpareParts] = useState(false);
+  const [spareParts, setSpareParts] = useState<any[]>([]);
 
   const [loadingExpenses, setLoadingExpenses] = useState(false);
   const [expenseData, setExpenseData] = useState<any[]>([]);
@@ -101,6 +107,17 @@ export default function ViewJob(props: any) {
     }
   };
 
+  const getSpareParts = async () => {
+    setLoadingSpareParts(true);
+
+    const response = await get_spareParts(props.dataObj.JobID);
+    if (response) {
+      setSpareParts(response);
+      console.log(response, "Spare-Parts");
+      setLoadingSpareParts(false);
+    }
+  };
+
   const getExpenses = async () => {
     setLoadingExpenses(true);
 
@@ -134,6 +151,7 @@ export default function ViewJob(props: any) {
     getJobDocuments();
     getProgressActions();
     getExpenses();
+    getSpareParts();
   }, []);
 
   const viewData = (expenseID: string, status: string, allData: any) => {
@@ -680,9 +698,130 @@ export default function ViewJob(props: any) {
 
           <TabPanel>
             <div className="tab-main-body">
-              <div className="mt-4">
-                <NoData message="No spare parts available" />
-              </div>
+              {loadingSpareParts && (
+                <div>
+                  <ContentLoader />
+                </div>
+              )}
+
+              {!loadingSpareParts && spareParts && spareParts.length === 0 && (
+                <div className="mt-4">
+                  <NoData message="No spare parts available" />
+                </div>
+              )}
+
+              {!loadingSpareParts && spareParts && spareParts.length !== 0 && (
+                <div>
+                  {spareParts.map((sPart: any, i: number) => (
+                    <div
+                      key={i}
+                      className="my-3 p-3"
+                      style={{
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                        borderColor: "#cfcfcfff",
+                      }}
+                    >
+                      <div className="d-flex">
+                        <p
+                          className="mb-0"
+                          style={{ fontFamily: "R2", fontSize: 13, width: 100 }}
+                        >
+                          Request ID
+                        </p>
+
+                        <div className="d-flex">
+                          <p
+                            className="mb-0"
+                            style={{ fontFamily: "R2", fontSize: 13 }}
+                          >
+                            :{" "}
+                            <span style={{ fontFamily: "R3", fontSize: 13 }}>
+                              {sPart.RequestId}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="d-flex">
+                        <p
+                          className="mb-0"
+                          style={{ fontFamily: "R2", fontSize: 13, width: 100 }}
+                        >
+                          Created Date
+                        </p>
+
+                        <div className="d-flex">
+                          <p
+                            className="mb-0"
+                            style={{ fontFamily: "R2", fontSize: 13 }}
+                          >
+                            :{" "}
+                            <span style={{ fontFamily: "R3", fontSize: 13 }}>
+                              {dateFetcher(sPart.CreatedDate)}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="d-flex">
+                        <p
+                          className="mb-0"
+                          style={{ fontFamily: "R2", fontSize: 13, width: 100 }}
+                        >
+                          Warehouse
+                        </p>
+
+                        <div className="d-flex">
+                          <p
+                            className="mb-0"
+                            style={{ fontFamily: "R2", fontSize: 13 }}
+                          >
+                            :{" "}
+                            <span style={{ fontFamily: "R3", fontSize: 13 }}>
+                              {sPart.Warehouse}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="">
+                        <p
+                          className="mb-0"
+                          style={{
+                            fontFamily: "R2",
+                            fontSize: 13,
+                          }}
+                        >
+                          Item Details
+                        </p>
+
+                        <table className="w-100 SpareTable">
+                          <thead>
+                            <tr>
+                              <th>Item Name</th>
+                              <th>Item Code</th>
+                              <th>Requested Quantity</th>
+                              <th>Consumed Quantity</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {sPart.lines.map((line: any, j: number) => (
+                              <tr key={j}>
+                                <td>{line.ItemName}</td>
+                                <td>{line.ItemCode}</td>
+                                <td>{line.Quantity}</td>
+                                <td>{Number(line.Consume)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </TabPanel>
 

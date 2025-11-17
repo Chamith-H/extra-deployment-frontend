@@ -14,6 +14,10 @@ export async function get_jobDocuments(id: string) {
   return await GET(controller, `job-documents/${id}`);
 }
 
+export async function get_spareParts(id: string) {
+  return await GET(controller, `get-parts/${id}`);
+}
+
 export async function get_journeyDocuments(id: string) {
   return await POST(controller, `journey-docs`, { journeyId: id });
 }

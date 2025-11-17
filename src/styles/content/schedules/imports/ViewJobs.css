@@ -309,3 +309,15 @@
 .Job_id-class span {
   color: #6b6b6b;
 }
+
+.SpareTable th {
+  font-family: "R3";
+  font-size: 13px;
+  font-weight: 500;
+  color: "grey";
+}
+
+.SpareTable td {
+  font-family: "R4";
+  font-size: 12px;
+}

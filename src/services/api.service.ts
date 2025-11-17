@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { toast } from "react-toastify";
 
-// const BASE_URL = "http://127.0.0.1:3005";
+// const BASE_URL = "http://192.168.8.104:3005";
 const BASE_URL =
   "https://syneris-service-hxaqdeaxctgqc3ew.westus2-01.azurewebsites.net";
 
