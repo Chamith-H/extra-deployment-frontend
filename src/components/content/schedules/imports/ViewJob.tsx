@@ -90,18 +90,30 @@ export default function ViewJob(props: any) {
       setLoadingJobActions(true);
       const response = await get_jobAction(props.dataObj.JobID);
 
+      console.log(JSON.stringify(response));
+
       if (response && response.length !== 0) {
+        // 1. Sort by AssignedDate
         const sorted = response.sort(
           (a: any, b: any) =>
             new Date(a.AssignedDate).getTime() -
             new Date(b.AssignedDate).getTime()
         );
 
-        const realActions = sorted.filter(
+        // 2. Remove "Checked-In"
+        const actions = sorted.filter(
           (res: any) => res.Status !== "Checked-In"
         );
 
-        setJobActions(realActions);
+        // 3. Remove consecutive duplicates
+        const uniqueConsecutive = actions.filter(
+          (action: any, index: number, array: any[]) => {
+            if (index === 0) return true; // always keep first
+            return action.Status !== array[index - 1].Status;
+          }
+        );
+
+        setJobActions(uniqueConsecutive);
         setLoadingJobActions(false);
       }
     }
